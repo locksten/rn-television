@@ -1,30 +1,24 @@
 import { ProductionTile } from "@components/ProductionTile"
-import {
-  ProductionListType,
-  productionListTypeToTitle,
-  ProductionType,
-  useProductionList,
-} from "@queries/Production"
+import { SectionTitle } from "@components/SectionTitle"
+import { Production } from "@queries/Production"
 import React, { VFC } from "react"
-import { FlatList, Text, View } from "react-native"
+import { FlatList, View } from "react-native"
 import tailwind from "tailwind-rn"
 
 export const ProductionList: VFC<{
-  productionType: ProductionType
-  productionListType: ProductionListType
-}> = ({ productionType, productionListType }) => {
-  const { data } = useProductionList(productionType, productionListType)
+  title: string
+  productions?: Production[]
+  onPress?: (id: number, production: Production) => void
+}> = ({ title, productions, onPress }) => {
   return (
     <View>
-      <Text style={tailwind("pl-4 pb-2 font-bold text-2xl")}>
-        {productionListTypeToTitle(productionListType)}
-      </Text>
+      <SectionTitle title={title} />
       <FlatList
         style={tailwind("h-40")}
-        data={data?.results}
+        data={productions}
         horizontal
         renderItem={({ item }) => (
-          <ProductionTile key={item.id} production={item} />
+          <ProductionTile key={item.id} production={item} onPress={onPress} />
         )}
         ItemSeparatorComponent={() => <View style={tailwind("w-2")} />}
         ListHeaderComponent={() => <View style={tailwind("w-4")} />}
