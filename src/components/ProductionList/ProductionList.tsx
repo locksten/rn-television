@@ -1,6 +1,6 @@
 import { ProductionTile } from "@components/ProductionTile"
 import { SectionTitle } from "@components/SectionTitle"
-import { Production } from "@queries/Production"
+import { Production } from "@queries/production"
 import React, { VFC } from "react"
 import { FlatList, View } from "react-native"
 import tailwind from "tailwind-rn"

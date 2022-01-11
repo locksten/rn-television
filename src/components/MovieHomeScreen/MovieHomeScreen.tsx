@@ -1,7 +1,7 @@
 import { MovieDetailScreen } from "@components/MovieDetailScreen"
 import { MovieProductionLists } from "@components/ProductionLists"
 import { ProductionScreenParams } from "@components/ProductionScreen"
-import { Movie } from "@queries/Movie"
+import { Movie } from "@queries/movie"
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
@@ -28,7 +28,7 @@ export const MovieHomeScreen: VFC = () => {
   )
 }
 
-export const HomeScreen: VFC<
+const HomeScreen: VFC<
   NativeStackScreenProps<MovieHomeScreenParams, "Home">
 > = ({ navigation }) => (
   <MovieProductionLists

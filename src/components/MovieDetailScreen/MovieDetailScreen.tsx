@@ -1,6 +1,6 @@
 import { MovieHomeScreenParams } from "@components/MovieHomeScreen"
 import { ProductionDetailSimilar } from "@components/ProductionDetailSimilar"
-import { useMovieDetail, useMovieSimilar } from "@queries/Movie"
+import { useMovieDetail, useMovieSimilar } from "@queries/movie"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { VFC } from "react"
 import { ScrollView, Text } from "react-native"

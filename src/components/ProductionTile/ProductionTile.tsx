@@ -1,7 +1,7 @@
-import { Production, productionListTypeToTitle } from "@queries/Production"
-import { tmdbImagePrefixUrl } from "@queries/TMDB"
+import { Production } from "@queries/production"
+import { tmdbImagePrefixUrl } from "@queries/tmdb"
 import React, { VFC } from "react"
-import { Image, TouchableHighlight, StyleSheet } from "react-native"
+import { Image, StyleSheet, TouchableHighlight } from "react-native"
 
 const tileImageUrl = (path?: string) =>
   path && tmdbImagePrefixUrl + "w500" + path

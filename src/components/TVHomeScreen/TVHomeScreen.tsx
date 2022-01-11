@@ -1,7 +1,7 @@
 import { TVProductionLists } from "@components/ProductionLists"
 import { ProductionScreenParams } from "@components/ProductionScreen"
 import { TVDetailScreen } from "@components/TVDetailScreen"
-import { TV } from "@queries/TV"
+import { TV } from "@queries/tv"
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
@@ -28,9 +28,9 @@ export const TVHomeScreen: VFC = () => {
   )
 }
 
-export const HomeScreen: VFC<
-  NativeStackScreenProps<TVHomeScreenParams, "Home">
-> = ({ navigation }) => (
+const HomeScreen: VFC<NativeStackScreenProps<TVHomeScreenParams, "Home">> = ({
+  navigation,
+}) => (
   <TVProductionLists
     onPress={(id, production) => {
       navigation.push("Detail", { id, production })

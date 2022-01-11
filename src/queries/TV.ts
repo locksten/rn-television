@@ -1,4 +1,4 @@
-import { ApiList, tmdb } from "@queries/TMDB"
+import { ApiList, tmdb } from "@queries/tmdb"
 import { useQuery } from "react-query"
 
 export type TV = Partial<{

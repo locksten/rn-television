@@ -1,4 +1,4 @@
-import { Production } from "@queries/Production"
+import { Production } from "@queries/production"
 
 export type ProductionScreenParams<T = Production> = {
   Home: undefined

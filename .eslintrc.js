@@ -1,10 +1,11 @@
+// eslint-disable-next-line no-undef
 module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint", "react", "react-native"],
   rules: {
-    "await-thenable": "warn",
-    "no-floating-promises": "warn",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
   },
   extends: [
     "eslint:recommended",
