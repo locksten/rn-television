@@ -24,7 +24,7 @@ export const ProductionList: VFC<{
         data={data?.results}
         horizontal
         renderItem={({ item }) => (
-          <ProductionTile key={item.id} production={item}></ProductionTile>
+          <ProductionTile key={item.id} production={item} />
         )}
         ItemSeparatorComponent={() => <View style={tailwind("w-2")} />}
         ListHeaderComponent={() => <View style={tailwind("w-4")} />}

@@ -20,10 +20,10 @@ export type Movie = Partial<{
 export type MovieList = ApiList<Movie>
 
 export const movieListTypes = [
-  "popular",
   "now_playing",
-  "top_rated",
   "upcoming",
+  "popular",
+  "top_rated",
 ] as const
 
 export type MovieListType = typeof movieListTypes[number]

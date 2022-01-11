@@ -1,8 +1,7 @@
 import { Production } from "@queries/Production"
 import { tmdbImagePrefixUrl } from "@queries/TMDB"
 import React, { VFC } from "react"
-import { Image, View } from "react-native"
-import tailwind from "tailwind-rn"
+import { Image } from "react-native"
 
 const tileImageUrl = (path?: string) =>
   path && tmdbImagePrefixUrl + "w500" + path
@@ -12,18 +11,11 @@ export const ProductionTile: VFC<{ production: Production }> = ({
 }) => {
   const imageUrl = tileImageUrl(poster_path)
   return (
-    <View style={tailwind("")}>
-      {imageUrl && (
-        <Image
-          style={[
-            tailwind("h-full w-full"),
-            { aspectRatio: 2 / 3, borderWidth: 0.5, borderColor: "#00000010" },
-          ]}
-          source={{ uri: imageUrl }}
-          borderRadius={8}
-          resizeMode="cover"
-        />
-      )}
-    </View>
+    <Image
+      style={{ aspectRatio: 2 / 3, borderWidth: 0.5, borderColor: "#00000010" }}
+      source={{ uri: imageUrl }}
+      borderRadius={8}
+      resizeMode="cover"
+    />
   )
 }
