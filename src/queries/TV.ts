@@ -110,10 +110,4 @@ export type TVDetail = Partial<{
 const fetchTVDetail = (id: number) => tmdb.get(`tv/${id}`).json<TVDetail>()
 
 export const useTVDetail = (id: number) =>
-  useQuery(["tv", id], () => fetchTVDetail(id))
-
-const fetchTVSimilar = (id: number) =>
-  tmdb.get(`tv/${id}/similar`).json<TVList>()
-
-export const useTVSimilar = (id: number) =>
-  useQuery(["tv", id, "similar"], () => fetchTVSimilar(id))
+  useQuery(["tv", id, "detail"], () => fetchTVDetail(id))

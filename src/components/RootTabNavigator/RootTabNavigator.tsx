@@ -1,16 +1,25 @@
-import { AccountScreen } from "@components/AccountScreen"
-import { MovieHomeScreen } from "@components/MovieHomeScreen"
-import { TVHomeScreen } from "@components/TVHomeScreen"
+import { AccountScreen, AccountScreenParams } from "@components/AccountScreen"
+import {
+  MovieHomeScreen,
+  MovieHomeScreenParams,
+} from "@components/MovieHomeScreen"
+import { TVHomeScreen, TVHomeScreenParams } from "@components/TVHomeScreen"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useAccountDetail } from "@queries/account"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs"
+import { NavigatorScreenParams } from "@react-navigation/native"
 import { VFC } from "react"
 
-type RootTabs = {
-  TV: undefined
-  Movie: undefined
-  Account: undefined
+export type RootTabs = {
+  TV: NavigatorScreenParams<TVHomeScreenParams>
+  Movie: NavigatorScreenParams<MovieHomeScreenParams>
+  Account: NavigatorScreenParams<AccountScreenParams>
 }
+
+export type RootTabsNavigationProp = BottomTabNavigationProp<RootTabs>
 
 export const RootTabNavigator: VFC = () => {
   const Tab = createBottomTabNavigator<RootTabs>()

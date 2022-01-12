@@ -1,11 +1,15 @@
+import { ProductionAccountStates } from "@queries/account"
+import { Session, useAuth } from "@queries/auth"
 import { Movie, MovieList, MovieListType, movieListTypes } from "@queries/movie"
-import { tmdb } from "@queries/tmdb"
+import { sessionParam, tmdb } from "@queries/tmdb"
 import { TV, TVList, TVListType, tvListTypes } from "@queries/tv"
-import { useQueries } from "react-query"
+import { useQueries, useQuery } from "react-query"
 
 export type ProductionType = "movie" | "tv"
 
 export type Production = Movie | TV
+
+export type ProductionList = MovieList | TVList
 
 export type ProductionListType = MovieListType | TVListType
 
@@ -21,6 +25,7 @@ const globalProductionListsQueryFn = async (
   type: ProductionType,
   listType: ProductionListType,
 ) => ({
+  type,
   name: productionListTypeToTitle(listType),
   productions: (await fetchProductionList(type, listType))?.results,
 })
@@ -52,3 +57,44 @@ export const productionListTypeToTitle = (type: ProductionListType) => {
       return "Upcoming"
   }
 }
+
+const fetchProductionAccountStates = async (
+  type: ProductionType,
+  id: number,
+  { token }: Session,
+) =>
+  tmdb
+    .get(`${type}/${id}/account_states`, {
+      searchParams: sessionParam(token),
+    })
+    .json<ProductionAccountStates>()
+
+export const useProductionAccountStates = (
+  type: ProductionType,
+  id: number,
+) => {
+  const session = useAuth().getSession()
+  return useQuery(
+    [type, id, "accountStates"],
+    () => session && fetchProductionAccountStates(type, id, session),
+  )
+}
+
+const fetchProductionSimilar = async (type: ProductionType, id: number) =>
+  tmdb.get(`${type}/${id}/similar`).json<ProductionList>()
+
+export const useProductionSimilar = (type: ProductionType, id: number) =>
+  useQuery([type, id, "similar"], () => fetchProductionSimilar(type, id))
+
+const fetchProductionRecommendations = async (
+  type: ProductionType,
+  id: number,
+) => tmdb.get(`${type}/${id}/recommendations`).json<ProductionList>()
+
+export const useProductionRecommendations = (
+  type: ProductionType,
+  id: number,
+) =>
+  useQuery([type, id, "recommendation"], () =>
+    fetchProductionRecommendations(type, id),
+  )

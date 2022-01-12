@@ -1,30 +1,30 @@
 import { TVProductionLists } from "@components/ProductionLists"
-import { ProductionScreenParams } from "@components/ProductionScreen"
-import { TVDetailScreen } from "@components/TVDetailScreen"
-import { TV } from "@queries/tv"
+import { RootTabs } from "@components/RootTabNavigator"
+import {
+  CommonStackParams,
+  WithCommonStackScreens,
+} from "@components/WithCommonStackScreens"
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs"
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from "@react-navigation/native-stack"
 import React, { VFC } from "react"
 
-export type TVHomeScreenParams = ProductionScreenParams<TV>
+export type TVHomeScreenParams = CommonStackParams & {
+  Home: undefined
+}
 
-export const TVHomeScreen: VFC = () => {
+export const TVHomeScreen: VFC<BottomTabScreenProps<RootTabs, "TV">> = () => {
   const Stack = createNativeStackNavigator<TVHomeScreenParams>()
   return (
-    <Stack.Navigator>
+    <WithCommonStackScreens stack={Stack}>
       <Stack.Screen
         options={{ headerShown: false }}
         name="Home"
         component={HomeScreen}
       />
-      <Stack.Screen
-        name="Detail"
-        component={TVDetailScreen}
-        options={({ route }) => ({ title: route.params.production?.name })}
-      />
-    </Stack.Navigator>
+    </WithCommonStackScreens>
   )
 }
 
@@ -32,8 +32,11 @@ const HomeScreen: VFC<NativeStackScreenProps<TVHomeScreenParams, "Home">> = ({
   navigation,
 }) => (
   <TVProductionLists
-    onPress={(id, production) => {
-      navigation.push("Detail", { id, production })
+    onPress={(type, id, production) => {
+      navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
+        id,
+        production,
+      })
     }}
   />
 )

@@ -1,7 +1,6 @@
 import { Session, useAuth } from "@queries/auth"
-import { MovieList } from "@queries/movie"
+import { ProductionList, ProductionType } from "@queries/production"
 import { sessionParam, tmdb } from "@queries/tmdb"
-import { TVList } from "@queries/tv"
 import { useQueries, useQuery } from "react-query"
 
 export type AccountDetail = Partial<{
@@ -26,20 +25,28 @@ export const useAccountDetail = () => {
   )
 }
 
-const accountProductionLists = [
+const accountProductionLists: {
+  type: ProductionType
+  name: string
+  uriFn: (id: number) => string
+}[] = [
   {
-    name: "Show Watchlist ",
+    type: "tv",
+    name: "Show Watchlist",
     uriFn: (id: number) => `account/${id}/watchlist/tv`,
   },
   {
-    name: "Movie Watchlist ",
+    type: "movie",
+    name: "Movie Watchlist",
     uriFn: (id: number) => `account/${id}/watchlist/movies`,
   },
   {
+    type: "tv",
     name: "Favorite Shows",
     uriFn: (id: number) => `account/${id}/favorite/tv`,
   },
   {
+    type: "movie",
     name: "Favorite Movies",
     uriFn: (id: number) => `account/${id}/favorite/movies`,
   },
@@ -51,13 +58,13 @@ const fetchAccountProductionList = async (
 ) =>
   tmdb
     .get(uriFn(id), { searchParams: sessionParam(token) })
-    .json<MovieList | TVList | undefined>()
+    .json<ProductionList | undefined>()
 
 export const useAccountProductionLists = () => {
   const session = useAuth().getSession()
   return useQueries(
-    accountProductionLists.map(({ name, uriFn }) => ({
-      queryKey: ["account", name],
+    accountProductionLists.map(({ type, name, uriFn }) => ({
+      queryKey: ["account", "productionList", name],
       queryFn: async () => {
         if (!session) return
         const productions = (await fetchAccountProductionList(uriFn, session))
@@ -65,6 +72,7 @@ export const useAccountProductionLists = () => {
         return productions?.length === 0
           ? undefined
           : {
+              type,
               name,
               productions,
             }
@@ -72,3 +80,35 @@ export const useAccountProductionLists = () => {
     })),
   )?.map((list) => list.data)
 }
+
+export const fetchSetProductionFavoriteOrWatchlistState = async (
+  session: Session,
+  type: "favorite" | "watchlist",
+  productionType: ProductionType,
+  id: number,
+  state: boolean,
+) => {
+  try {
+    await tmdb
+      .post(`account/${session.id}/${type}`, {
+        searchParams: sessionParam(session.token),
+        throwHttpErrors: true,
+        json: { media_type: productionType, media_id: id, [type]: state },
+      })
+      .json()
+    return true
+  } catch {
+    return false
+  }
+}
+
+export type ProductionAccountStates = Partial<{
+  id: number
+  favorite: boolean
+  rated:
+    | boolean
+    | {
+        value: number
+      }
+  watchlist: boolean
+}>

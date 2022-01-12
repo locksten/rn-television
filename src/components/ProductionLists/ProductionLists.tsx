@@ -1,18 +1,23 @@
 import { ProductionList } from "@components/ProductionList"
+import { OnProductionPress } from "@components/ProductionTile"
 import { SeparatedBy } from "@components/SeparatedBy"
-import { Production, useGlobalProductionLists } from "@queries/production"
+import {
+  Production,
+  ProductionType,
+  useGlobalProductionLists,
+} from "@queries/production"
 import React, { VFC } from "react"
 import { ScrollView, View } from "react-native"
 import tailwind from "tailwind-rn"
 
 export const TVProductionLists: VFC<{
-  onPress?: (id: number, production: Production) => void
+  onPress?: OnProductionPress
 }> = ({ onPress }) => (
   <ProductionLists lists={useGlobalProductionLists("tv")} onPress={onPress} />
 )
 
 export const MovieProductionLists: VFC<{
-  onPress?: (id: number, production: Production) => void
+  onPress?: OnProductionPress
 }> = ({ onPress }) => (
   <ProductionLists
     lists={useGlobalProductionLists("movie")}
@@ -21,8 +26,15 @@ export const MovieProductionLists: VFC<{
 )
 
 export const ProductionLists: VFC<{
-  lists: ({ name: string; productions: Production[] | undefined } | undefined)[]
-  onPress?: (id: number, production: Production) => void
+  lists: (
+    | {
+        type: ProductionType
+        name: string
+        productions: Production[] | undefined
+      }
+    | undefined
+  )[]
+  onPress?: OnProductionPress
 }> = ({ lists, onPress }) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -31,6 +43,7 @@ export const ProductionLists: VFC<{
           return list ? (
             <ProductionList
               title={list.name}
+              productionType={list.type}
               productions={list.productions}
               onPress={onPress}
               key={list.name}

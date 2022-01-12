@@ -1,4 +1,4 @@
-import { ApiList, tmdb } from "@queries/tmdb"
+import { tmdb, ApiList } from "@queries/tmdb"
 import { useQuery } from "react-query"
 
 export type Movie = Partial<{
@@ -33,13 +33,7 @@ const fetchMovieDetail = (id: number) =>
   tmdb.get(`movie/${id}`).json<MovieDetail>()
 
 export const useMovieDetail = (id: number) =>
-  useQuery(["movie", id], () => fetchMovieDetail(id))
-
-const fetchMovieSimilar = (id: number) =>
-  tmdb.get(`movie/${id}/similar`).json<MovieList>()
-
-export const useMovieSimilar = (id: number) =>
-  useQuery(["movie", id, "similar"], () => fetchMovieSimilar(id))
+  useQuery(["movie", id, "detail"], () => fetchMovieDetail(id))
 
 export type MovieDetail = Partial<{
   adult: boolean

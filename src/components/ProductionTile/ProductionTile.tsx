@@ -1,4 +1,4 @@
-import { Production } from "@queries/production"
+import { Production, ProductionType } from "@queries/production"
 import { tmdbImagePrefixUrl } from "@queries/tmdb"
 import React, { VFC } from "react"
 import { Image, StyleSheet, TouchableHighlight } from "react-native"
@@ -6,14 +6,23 @@ import { Image, StyleSheet, TouchableHighlight } from "react-native"
 const tileImageUrl = (path?: string) =>
   path && tmdbImagePrefixUrl + "w500" + path
 
+export type OnProductionPress = (
+  type: ProductionType,
+  id: number,
+  production: Production,
+) => void
+
 export const ProductionTile: VFC<{
+  type: ProductionType
   production: Production
-  onPress?: (id: number, production: Production) => void
-}> = ({ production, onPress }) => {
+  onPress?: OnProductionPress
+}> = ({ type, production, onPress }) => {
   const imageUrl = tileImageUrl(production.poster_path)
   return (
     <TouchableHighlight
-      onPress={() => production.id && onPress?.(production.id, production)}
+      onPress={() =>
+        production.id && onPress?.(type, production.id, production)
+      }
       style={styles.touchable}
     >
       <Image

@@ -1,30 +1,32 @@
-import { MovieDetailScreen } from "@components/MovieDetailScreen"
 import { MovieProductionLists } from "@components/ProductionLists"
-import { ProductionScreenParams } from "@components/ProductionScreen"
-import { Movie } from "@queries/movie"
+import { RootTabs } from "@components/RootTabNavigator"
+import {
+  CommonStackParams,
+  WithCommonStackScreens,
+} from "@components/WithCommonStackScreens"
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs"
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from "@react-navigation/native-stack"
 import React, { VFC } from "react"
 
-export type MovieHomeScreenParams = ProductionScreenParams<Movie>
+export type MovieHomeScreenParams = CommonStackParams & {
+  Home: undefined
+}
 
-export const MovieHomeScreen: VFC = () => {
+export const MovieHomeScreen: VFC<
+  BottomTabScreenProps<RootTabs, "Movie">
+> = () => {
   const Stack = createNativeStackNavigator<MovieHomeScreenParams>()
   return (
-    <Stack.Navigator>
+    <WithCommonStackScreens stack={Stack}>
       <Stack.Screen
         options={{ headerShown: false }}
         name="Home"
         component={HomeScreen}
       />
-      <Stack.Screen
-        name="Detail"
-        component={MovieDetailScreen}
-        options={({ route }) => ({ title: route.params.production?.title })}
-      />
-    </Stack.Navigator>
+    </WithCommonStackScreens>
   )
 }
 
@@ -32,8 +34,8 @@ const HomeScreen: VFC<
   NativeStackScreenProps<MovieHomeScreenParams, "Home">
 > = ({ navigation }) => (
   <MovieProductionLists
-    onPress={(id, production) => {
-      navigation.push("Detail", { id, production })
+    onPress={(_, id, production) => {
+      navigation.push("MovieDetail", { id, production })
     }}
   />
 )
