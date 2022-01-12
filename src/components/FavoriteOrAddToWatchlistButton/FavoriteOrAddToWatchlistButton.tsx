@@ -65,7 +65,7 @@ export const FavoriteOrAddToWatchlistButton: VFC<{
         color={
           !states || isProcessing ? "gray" : currentState ? "#dc2626" : "black"
         }
-        size={32}
+        size={36}
       />
     </Pressable>
   )

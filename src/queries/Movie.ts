@@ -1,4 +1,6 @@
+import { Credits } from "@queries/credit"
 import { tmdb, ApiList } from "@queries/tmdb"
+import { Videos } from "@queries/video"
 import { useQuery } from "react-query"
 
 export type Movie = Partial<{
@@ -34,6 +36,18 @@ const fetchMovieDetail = (id: number) =>
 
 export const useMovieDetail = (id: number) =>
   useQuery(["movie", id, "detail"], () => fetchMovieDetail(id))
+
+export type MovieDetailExtra = MovieDetail & { credits?: Credits } & {
+  videos?: Videos
+}
+
+const fetchMovieDetailExtra = async (id: number) =>
+  tmdb
+    .get(`movie/${id}`, { searchParams: "append_to_response=credits,videos" })
+    .json<MovieDetailExtra>()
+
+export const useMovieDetailExtra = (id: number) =>
+  useQuery(["movie", id, "detail", "extra"], () => fetchMovieDetailExtra(id))
 
 export type MovieDetail = Partial<{
   adult: boolean

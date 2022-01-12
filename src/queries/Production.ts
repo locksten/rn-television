@@ -1,15 +1,33 @@
 import { ProductionAccountStates } from "@queries/account"
 import { Session, useAuth } from "@queries/auth"
-import { Movie, MovieList, MovieListType, movieListTypes } from "@queries/movie"
+import {
+  Movie,
+  MovieDetail,
+  MovieDetailExtra,
+  MovieList,
+  MovieListType,
+  movieListTypes,
+} from "@queries/movie"
 import { sessionParam, tmdb } from "@queries/tmdb"
-import { TV, TVList, TVListType, tvListTypes } from "@queries/tv"
+import {
+  TV,
+  TVDetail,
+  TVDetailExtra,
+  TVList,
+  TVListType,
+  tvListTypes,
+} from "@queries/tv"
 import { useQueries, useQuery } from "react-query"
-
-export type ProductionType = "movie" | "tv"
 
 export type Production = Movie | TV
 
+export type ProductionType = "movie" | "tv"
+
 export type ProductionList = MovieList | TVList
+
+export type ProductionDetail = MovieDetail | TVDetail
+
+export type ProductionDetailExtra = MovieDetailExtra | TVDetailExtra
 
 export type ProductionListType = MovieListType | TVListType
 
