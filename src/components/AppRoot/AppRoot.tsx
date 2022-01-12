@@ -4,7 +4,6 @@ import { AppQueryClientProvider } from "@queries/queryClient"
 import { NavigationContainer } from "@react-navigation/native"
 import { StatusBar } from "expo-status-bar"
 import React, { VFC } from "react"
-
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"
 
 export const AppRoot: VFC = () => {

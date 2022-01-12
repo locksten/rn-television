@@ -1,6 +1,6 @@
-import { Movie, MovieList, MovieListType } from "@queries/movie"
+import { Movie, MovieList, MovieListType, movieListTypes } from "@queries/movie"
 import { tmdb } from "@queries/tmdb"
-import { TV, TVList, TVListType } from "@queries/tv"
+import { TV, TVList, TVListType, tvListTypes } from "@queries/tv"
 import { useQueries } from "react-query"
 
 export type ProductionType = "movie" | "tv"
@@ -17,21 +17,24 @@ const fetchProductionList = (
     .get(`${productionType}/${listType}`)
     .json<ProductionType extends "movie" ? MovieList : TVList>()
 
-export const useProductionLists = (
-  productionType: ProductionType,
-  listTypes: readonly ProductionListType[],
-) =>
-  useQueries(
-    listTypes.map((listType) => {
+const globalProductionListsQueryFn = async (
+  type: ProductionType,
+  listType: ProductionListType,
+) => ({
+  name: productionListTypeToTitle(listType),
+  productions: (await fetchProductionList(type, listType))?.results,
+})
+
+export const useGlobalProductionLists = (type: ProductionType) => {
+  return useQueries(
+    (type === "movie" ? movieListTypes : tvListTypes).map((listType) => {
       return {
-        queryKey: [productionType, listType],
-        queryFn: async () => ({
-          listType: listType,
-          listPage: await fetchProductionList(productionType, listType),
-        }),
+        queryKey: [type, listType],
+        queryFn: () => globalProductionListsQueryFn(type, listType),
       }
     }),
-  )
+  )?.map((list) => list.data)
+}
 
 export const productionListTypeToTitle = (type: ProductionListType) => {
   switch (type) {

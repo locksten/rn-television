@@ -13,7 +13,7 @@ export const SeparatedBy: VFC<
     {Children.map(children, (child, idx) => (
       <View key={idx}>
         {child}
-        {idx !== Children.count(children) - 1 && separator}
+        {child && idx !== Children.count(children) - 1 && separator}
       </View>
     ))}
     {end && separator}

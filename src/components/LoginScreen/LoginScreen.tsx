@@ -1,3 +1,4 @@
+import { fetchAccountDetail } from "@queries/account"
 import {
   fetchNewRequestToken,
   fetchNewSessionToken,
@@ -40,7 +41,7 @@ type AuthStatus = "none" | "authenticating" | "failed"
 const HomeScreen: VFC<NativeStackScreenProps<LoginScreenParams, "Home">> = ({
   navigation,
 }) => {
-  const { setSessionToken } = useAuth()
+  const { logIn } = useAuth()
   const [requestToken, setRequestToken] = useState<string | undefined>()
   const [status, setStatus] = useState<AuthStatus>("none")
 
@@ -51,16 +52,22 @@ const HomeScreen: VFC<NativeStackScreenProps<LoginScreenParams, "Home">> = ({
 
       setStatus("authenticating")
       const sessionToken = await fetchNewSessionToken(requestToken)
-
       setRequestToken(undefined)
       if (!sessionToken) {
         setStatus("failed")
         return
       }
-      setSessionToken(sessionToken)
+
+      const { id } = await fetchAccountDetail(sessionToken)
+      if (!id) {
+        setStatus("failed")
+        return
+      }
+
+      logIn({ id, token: sessionToken })
     })
     return unsubscribe
-  }, [navigation, requestToken, setSessionToken])
+  }, [navigation, requestToken, logIn])
 
   return (
     <View style={tailwind("justify-center h-full")}>

@@ -1,14 +1,6 @@
 import { ProductionList } from "@components/ProductionList"
 import { SeparatedBy } from "@components/SeparatedBy"
-import { movieListTypes } from "@queries/movie"
-import {
-  Production,
-  ProductionListType,
-  productionListTypeToTitle,
-  ProductionType,
-  useProductionLists,
-} from "@queries/production"
-import { tvListTypes } from "@queries/tv"
+import { Production, useGlobalProductionLists } from "@queries/production"
 import React, { VFC } from "react"
 import { ScrollView, View } from "react-native"
 import tailwind from "tailwind-rn"
@@ -16,31 +8,32 @@ import tailwind from "tailwind-rn"
 export const TVProductionLists: VFC<{
   onPress?: (id: number, production: Production) => void
 }> = ({ onPress }) => (
-  <ProductionLists type="tv" listTypes={tvListTypes} onPress={onPress} />
+  <ProductionLists lists={useGlobalProductionLists("tv")} onPress={onPress} />
 )
 
 export const MovieProductionLists: VFC<{
   onPress?: (id: number, production: Production) => void
 }> = ({ onPress }) => (
-  <ProductionLists type="movie" listTypes={movieListTypes} onPress={onPress} />
+  <ProductionLists
+    lists={useGlobalProductionLists("movie")}
+    onPress={onPress}
+  />
 )
 
-const ProductionLists: VFC<{
-  type: ProductionType
-  listTypes: readonly ProductionListType[]
+export const ProductionLists: VFC<{
+  lists: ({ name: string; productions: Production[] | undefined } | undefined)[]
   onPress?: (id: number, production: Production) => void
-}> = ({ type, listTypes, onPress }) => {
-  const lists = useProductionLists(type, listTypes)
+}> = ({ lists, onPress }) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <SeparatedBy separator={<View style={tailwind("h-8")} />} start end>
-        {lists.map(({ data }) => {
-          return data?.listType ? (
+        {lists.map((list) => {
+          return list ? (
             <ProductionList
-              title={productionListTypeToTitle(data.listType)}
-              productions={data?.listPage?.results}
+              title={list.name}
+              productions={list.productions}
               onPress={onPress}
-              key={type + data.listType}
+              key={list.name}
             />
           ) : null
         })}

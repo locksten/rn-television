@@ -36,21 +36,29 @@ export const fetchDeleteSession = async (sessionToken: string) =>
     })
     .json()
 
-const sessionTokenKey = "session_token"
+export type Session = { token: string; id: number }
 
-const setStoredSessionToken = (token: string) =>
-  SecureStore.setItemAsync(sessionTokenKey, token)
+const sessionKey = "sessionKey"
 
-const getStoredSessionToken = () => SecureStore.getItemAsync(sessionTokenKey)
+const setStoredSession = (session: Session) =>
+  SecureStore.setItemAsync(sessionKey, JSON.stringify(session))
 
-const clearStoredSessionToken = () =>
-  SecureStore.deleteItemAsync(sessionTokenKey)
+const getStoredSession = async () => {
+  const session = await SecureStore.getItemAsync(sessionKey)
+  try {
+    return session ? JSON.parse(session) : undefined
+  } catch {
+    return undefined
+  }
+}
+
+const clearStoredSession = () => SecureStore.deleteItemAsync(sessionKey)
 
 type AuthContextType = {
   isLoggedIn: boolean
   logOut: () => void
-  getSessionToken: (options?: { orLogOut?: boolean }) => string | undefined
-  setSessionToken: (token: string) => Promise<void>
+  getSession: () => Session | undefined
+  logIn: (session: Session) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>(
@@ -63,32 +71,31 @@ export const useAuth = () => {
 
 export const useAuthProvider = () => {
   const [isLoggedIn, setIsloggedIn] = useState(false)
-  const [cachedSessionToken, setCachedSessionToken] = useState<
-    string | undefined
-  >(undefined)
+  const [cachedSession, setCachedSession] = useState<Session | undefined>(
+    undefined,
+  )
 
   useEffect(() => {
-    getStoredSessionToken().then((token) => {
-      setIsloggedIn(!!token)
-      setCachedSessionToken(token ?? undefined)
+    getStoredSession().then((session) => {
+      setIsloggedIn(!!session)
+      setCachedSession(session)
     })
   }, [])
 
   const logOut = () => {
-    cachedSessionToken && fetchDeleteSession(cachedSessionToken)
-    clearStoredSessionToken()
-    setCachedSessionToken(undefined)
+    cachedSession && fetchDeleteSession(cachedSession.token)
+    clearStoredSession()
+    setCachedSession(undefined)
     setIsloggedIn(false)
   }
 
-  const getSessionToken: AuthContextType["getSessionToken"] = (options) => {
-    if (options?.orLogOut && !cachedSessionToken) logOut()
-    return cachedSessionToken
+  const getSession: AuthContextType["getSession"] = () => {
+    return cachedSession
   }
 
-  const setSessionToken = async (token: string) => {
-    await setStoredSessionToken(token)
-    setCachedSessionToken(token)
+  const logIn: AuthContextType["logIn"] = async (session: Session) => {
+    await setStoredSession(session)
+    setCachedSession(session)
     setIsloggedIn(true)
   }
 
@@ -98,8 +105,8 @@ export const useAuthProvider = () => {
         value={{
           isLoggedIn,
           logOut,
-          getSessionToken,
-          setSessionToken,
+          getSession,
+          logIn,
         }}
       >
         {children}
@@ -111,7 +118,7 @@ export const useAuthProvider = () => {
     AuthContextProvider,
     isLoggedIn,
     logOut,
-    getSessionToken,
-    setSessionToken,
+    getSession,
+    logIn,
   }
 }
