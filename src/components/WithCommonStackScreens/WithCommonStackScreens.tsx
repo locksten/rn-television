@@ -1,5 +1,6 @@
 import { MovieDetailScreen } from "@components/MovieDetailScreen"
 import { TVDetailScreen } from "@components/TVDetailScreen"
+import { WebViewScreen } from "@components/WebViewScreen"
 import { YouTubeScreen } from "@components/YouTubeScreen"
 import { Movie } from "@queries/movie"
 import { TV } from "@queries/tv"
@@ -16,6 +17,7 @@ export type CommonStackParams = {
   TVDetail: { id: number; production?: TV }
   MovieDetail: { id: number; production?: Movie }
   YouTube: { video: Video; meta?: YoutubeMeta }
+  WebView: { url: string; title?: string }
 }
 
 const GenericlessCommonStack = () =>
@@ -49,6 +51,14 @@ export const WithCommonStackScreens: FC<{
         component={YouTubeScreen}
         options={({ route }) => ({
           title: route.params.video.name || "Video",
+          presentation: "modal",
+        })}
+      />
+      <Stack.Screen
+        name="WebView"
+        component={WebViewScreen}
+        options={({ route }) => ({
+          title: route.params.title || "Web",
           presentation: "modal",
         })}
       />

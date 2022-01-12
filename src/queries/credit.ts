@@ -6,6 +6,8 @@ export type CastMember = Partial<{
   name: string
   original_name: string
   popularity: number
+  profile_path: string
+  cast_id: number
   character: string
   credit_id: string
   order: number
@@ -24,6 +26,10 @@ export type CrewMember = Partial<{
   department: string
   job: string
 }>
+
+export type Credit = CastMember | CrewMember
+
+export type CreditType = "cast" | "crew"
 
 export type Credits = Partial<{
   cast: CastMember[]

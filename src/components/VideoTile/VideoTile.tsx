@@ -41,14 +41,12 @@ const YouTubeVideoTile: VFC<{
     >
       <View style={{ width }}>
         <View style={{ width, height }}>
-          {!!meta?.thumbnail_url && (
-            <Image
-              style={styles.image}
-              source={{ uri: meta.thumbnail_url }}
-              borderRadius={borderRadius}
-              resizeMode="cover"
-            />
-          )}
+          <Image
+            style={[styles.image, tailwind("bg-gray-200")]}
+            source={{ uri: meta?.thumbnail_url }}
+            borderRadius={borderRadius}
+            resizeMode="cover"
+          />
         </View>
         <View style={tailwind("pt-1")}>
           <Text numberOfLines={1} style={tailwind("")}>

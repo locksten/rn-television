@@ -32,8 +32,8 @@ const HomeScreen: VFC<NativeStackScreenProps<TVHomeScreenParams, "Home">> = ({
   navigation,
 }) => (
   <TVProductionLists
-    onPress={(type, id, production) => {
-      navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
+    onPress={(id, production) => {
+      navigation.push("TVDetail", {
         id,
         production,
       })

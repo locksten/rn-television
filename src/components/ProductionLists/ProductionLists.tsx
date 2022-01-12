@@ -13,7 +13,10 @@ import tailwind from "tailwind-rn"
 export const TVProductionLists: VFC<{
   onPress?: OnProductionPress
 }> = ({ onPress }) => (
-  <ProductionLists lists={useGlobalProductionLists("tv")} onPress={onPress} />
+  <ProductionLists
+    lists={useGlobalProductionLists("tv")}
+    onPress={(_, id, production) => onPress?.(id, production)}
+  />
 )
 
 export const MovieProductionLists: VFC<{
@@ -21,7 +24,7 @@ export const MovieProductionLists: VFC<{
 }> = ({ onPress }) => (
   <ProductionLists
     lists={useGlobalProductionLists("movie")}
-    onPress={onPress}
+    onPress={(_, id, production) => onPress?.(id, production)}
   />
 )
 
@@ -34,7 +37,7 @@ export const ProductionLists: VFC<{
       }
     | undefined
   )[]
-  onPress?: OnProductionPress
+  onPress?: (type: ProductionType, id: number, production: Production) => void
 }> = ({ lists, onPress }) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -43,9 +46,8 @@ export const ProductionLists: VFC<{
           return list ? (
             <ProductionList
               title={list.name}
-              productionType={list.type}
               productions={list.productions}
-              onPress={onPress}
+              onPress={(id, production) => onPress?.(list.type, id, production)}
               key={list.name}
             />
           ) : null
