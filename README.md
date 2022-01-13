@@ -1,3 +1,10 @@
+<p float="left" align="middle">
+<img src="../media/iosMovieHomeScreen.jpeg?raw=rue" width="250">
+<img src="../media/iosTVDetailViewPosterSection.jpeg?raw=rue" width="250">
+<img src="../media/iosTVDetailViewSeasons.jpeg?raw=rue" width="250">
+</p>
+
+
 # Running
 Scan [Expo Go QR code](https://expo.dev/@locksten/rn-television) (Android only)
 
