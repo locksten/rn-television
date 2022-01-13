@@ -81,9 +81,9 @@ export const useAccountProductionLists = () => {
   )?.map((list) => list.data)
 }
 
-export const fetchSetProductionFavoriteOrWatchlistState = async (
+export const fetchSetProductionAccountState = async (
   session: Session,
-  type: "favorite" | "watchlist",
+  type: "favorite" | "watchlist" | "rated",
   productionType: ProductionType,
   id: number,
   state: boolean,
@@ -105,10 +105,40 @@ export const fetchSetProductionFavoriteOrWatchlistState = async (
 export type ProductionAccountStates = Partial<{
   id: number
   favorite: boolean
-  rated:
-    | boolean
-    | {
-        value: number
-      }
+  rated: { value?: number }
   watchlist: boolean
 }>
+
+export const fetchRateProduction = async (
+  session: Session,
+  productionType: ProductionType,
+  id: number,
+  rating: number,
+) => {
+  try {
+    if (rating === 0) {
+      await tmdb
+        .delete(`${productionType}/${id}/rating`, {
+          searchParams: sessionParam(session.token),
+          throwHttpErrors: true,
+        })
+        .json()
+    } else {
+      await tmdb
+        .post(`${productionType}/${id}/rating`, {
+          searchParams: sessionParam(session.token),
+          throwHttpErrors: true,
+          json: {
+            value: processRatingForApi(rating),
+          },
+        })
+        .json()
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
+export const processRatingForApi = (rating: number) =>
+  Math.min(10, Math.max(0.5, Math.round(rating / 10 / 0.5) * 0.5))

@@ -1,5 +1,5 @@
-import { AddToListButtons } from "@components/AddToListButtons"
 import { ProductionCastMembers } from "@components/Credits"
+import { FavoriteOrAddToWatchlistButton } from "@components/FavoriteOrAddToWatchlistButton"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
 import { ProductionList } from "@components/ProductionList"
 import { ProductionTile } from "@components/ProductionTile"
@@ -7,10 +7,12 @@ import { RatingRing } from "@components/RatingRing"
 import { SeparatedBy } from "@components/SeparatedBy"
 import { VideoTile } from "@components/VideoTile"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
+import { ProductionAccountStates } from "@queries/account"
 import { Movie, MovieDetail, MovieDetailExtra } from "@queries/movie"
 import {
   ProductionDetailExtra,
   ProductionType,
+  useProductionAccountStates,
   useProductionRecommendations,
 } from "@queries/production"
 import { TV, TVDetail, TVDetailExtra } from "@queries/tv"
@@ -65,7 +67,7 @@ const Title: VFC<{
 }> = ({ detail }) => {
   const title = (detail as Movie).title || (detail as TV).name
   return title ? (
-    <Text style={tailwind("font-bold text-lg")}>{title}</Text>
+    <Text style={tailwind("font-bold text-lg leading-6 pt-1")}>{title}</Text>
   ) : null
 }
 
@@ -225,18 +227,51 @@ const EpisodeCount: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
 const ButtonSection: VFC<{
   type: ProductionType
   detail: ProductionDetailExtra & { id: number }
-}> = ({ type, detail: { vote_average, id } }) => (
-  <View style={tailwind("flex-row")}>
-    <View>
-      <AddToListButtons type={type} id={id} />
-    </View>
-    {!!vote_average && (
-      <View style={tailwind(" flex-1 justify-center items-center")}>
-        <RatingRing percentage={vote_average / 10} myPercentage={0.6} />
+}> = ({ type, detail }) => {
+  const states = useProductionAccountStates(type, detail.id)
+
+  return (
+    <View
+      style={[tailwind("flex-row"), { opacity: states.isLoading ? 0.6 : 1 }]}
+    >
+      <View>
+        <FavoriteOrAddToWatchlistButton
+          type="favorite"
+          states={states.data}
+          productionType={type}
+          id={detail.id}
+        />
+        <FavoriteOrAddToWatchlistButton
+          type="watchlist"
+          states={states.data}
+          productionType={type}
+          id={detail.id}
+        />
       </View>
-    )}
-  </View>
-)
+      <View style={tailwind("flex-1 justify-center items-start pl-2")}>
+        <Ratings detail={detail} productionType={type} states={states.data} />
+      </View>
+    </View>
+  )
+}
+const Ratings: VFC<{
+  productionType: ProductionType
+  detail: ProductionDetailExtra & { id: number }
+  states?: ProductionAccountStates
+}> = ({ productionType, detail: { vote_average, id }, states }) => {
+  const percentage = vote_average ? vote_average / 10 : undefined
+  const myPercentage = states?.rated?.value
+    ? states?.rated?.value / 10
+    : undefined
+  return (
+    <RatingRing
+      percentage={percentage}
+      myPercentage={myPercentage}
+      productionType={productionType}
+      id={id}
+    />
+  )
+}
 
 const Runtime: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
   const runtime = productionDetailToRuntime(detail)
