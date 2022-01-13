@@ -1,4 +1,5 @@
 import { AccountScreenParams } from "@components/AccountScreen"
+import { TMDBAttribution } from "@components/TMDBAttribution"
 import { fetchAccountDetail } from "@queries/account"
 import {
   fetchNewRequestToken,
@@ -60,10 +61,20 @@ export const LoginScreen: VFC<
   }, [logIn, navigation, requestToken])
 
   return (
-    <View style={tailwind("justify-center h-full")}>
-      <Status status={status} />
-      <View style={tailwind("pt-2 px-16")}>
-        <Button title="Log in" onPress={attemptAuth} />
+    <View style={tailwind("items-center")}>
+      <View style={tailwind("h-8")} />
+      <TMDBAttribution />
+      <View style={tailwind("h-32")} />
+      <View style={tailwind("justify-around w-full")}>
+        <Status status={status} />
+        <View style={tailwind("h-4")} />
+        <View style={tailwind("px-16 w-full")}>
+          <Button
+            title="Log in"
+            onPress={attemptAuth}
+            disabled={status === "authenticating"}
+          />
+        </View>
       </View>
     </View>
   )
@@ -76,7 +87,7 @@ const Status: VFC<{ status: AuthStatus }> = ({ status }) => {
       ? "Something went wrong\nPlease try again"
       : "Authenticating"
   return (
-    <View style={[tailwind(`h-20`)]}>
+    <View style={[tailwind(`h-20 w-full`)]}>
       {status !== "none" && (
         <View style={[tailwind(`p-4 h-full justify-center bg-${color}-100`)]}>
           <Text style={tailwind(`font-bold text-center text-${color}-800`)}>

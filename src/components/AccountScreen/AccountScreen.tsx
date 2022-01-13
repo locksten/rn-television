@@ -2,7 +2,6 @@ import { AuthWebView } from "@components/AuthWebView"
 import { LoginScreen } from "@components/LoginScreen"
 import { ProductionLists } from "@components/ProductionLists"
 import { RootTabs } from "@components/RootTabNavigator"
-import { SeparatedBy } from "@components/SeparatedBy"
 import {
   CommonStackParams,
   WithCommonStackScreens,
@@ -74,23 +73,23 @@ const HomeScreen: VFC<NativeStackScreenProps<AccountScreenParams, "Home">> = ({
   const lists = useAccountProductionLists()
   return (
     <ScrollView>
-      <SeparatedBy separator={<View style={tailwind("h-8")} />} start end>
-        <View style={tailwind("px-8")}>
-          <Text style={tailwind("pb-2 font-bold text-center")}>
-            {account?.username}
-          </Text>
-          <Button title="Log out" onPress={() => logOut()} />
-        </View>
-        <ProductionLists
-          lists={lists}
-          onPress={(type, id, production) => {
-            navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
-              id,
-              production,
-            })
-          }}
-        />
-      </SeparatedBy>
+      <View style={tailwind("h-16")} />
+      <View style={tailwind("px-16")}>
+        <Text style={tailwind("pb-2 font-bold text-center")}>
+          {account?.username}
+        </Text>
+        <View style={tailwind("h-4")} />
+        <Button title="Log out" onPress={() => logOut()} />
+      </View>
+      <ProductionLists
+        lists={lists}
+        onPress={(type, id, production) => {
+          navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
+            id,
+            production,
+          })
+        }}
+      />
     </ScrollView>
   )
 }
