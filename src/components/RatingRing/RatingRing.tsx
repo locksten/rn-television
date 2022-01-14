@@ -194,7 +194,9 @@ const RingText: VFC<{
   myValue?: number
   percentage?: number
 }> = ({ displayMyValue, myValue = 0, percentage = 0 }) => {
-  const value = displayMyValue ? myValue : Math.round(percentage * 100)
+  const value = displayMyValue
+    ? Math.round(myValue)
+    : Math.round(percentage * 100)
   return (
     <View
       style={[
