@@ -20,7 +20,6 @@ export const ProductionList: <
     data={productions}
     renderItem={({ item }) => (
       <ProductionTile
-        key={item.id}
         production={item}
         RenderDescription={RenderDescription}
         onPress={onPress}

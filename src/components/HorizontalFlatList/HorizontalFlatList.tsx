@@ -4,11 +4,18 @@ import { FlatList, FlatListProps, View } from "react-native"
 import tailwind from "tailwind-rn"
 
 export const HorizontalFlatList: <T>(
-  props: FlatListProps<T> & { title?: string; renderEmpty?: boolean },
+  props: FlatListProps<T> & {
+    title?: string | (() => JSX.Element)
+    renderEmpty?: boolean
+  },
 ) => React.ReactElement | null = ({ title, renderEmpty = false, ...props }) =>
   renderEmpty || (props.data && props.data.length !== 0) ? (
     <View>
-      {!!title && <SectionTitle title={title} />}
+      {typeof title === "string" && title ? (
+        <SectionTitle title={title} />
+      ) : (
+        title
+      )}
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}

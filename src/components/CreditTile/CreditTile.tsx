@@ -41,9 +41,7 @@ export const CreditTile: VFC<
           {props.credit.name}
         </Text>
         <Text numberOfLines={2}>
-          {props.type === "cast"
-            ? props.credit.character
-            : props.credit.department}{" "}
+          {props.type === "cast" ? props.credit.character : props.credit.job}
         </Text>
       </View>
     </TouchableOpacity>

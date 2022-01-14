@@ -36,3 +36,18 @@ export type Credits = Partial<{
   crew: CrewMember[]
   id: number
 }>
+
+export const combineSameCrewMembers = (crew: CrewMember[]) => {
+  return crew.reduce((acc, credit) => {
+    const existing = acc.find(({ id }) => id === credit.id)
+    const job = credit.job
+    if (existing) {
+      job &&
+        !existing.job?.includes(job) &&
+        (existing.job += job ? `, ${job}` : `${job}`)
+    } else {
+      acc.push(credit)
+    }
+    return acc
+  }, [] as CrewMember[])
+}

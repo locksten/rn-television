@@ -25,23 +25,25 @@ export const ProductionTile: <
   const imageUrl = tileImageUrl(production.poster_path)
   const width = height / 1.5
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={() => production.id && onPress?.(production.id, production)}
-      style={[styles.touchable, { flex: 1 }]}
-    >
-      <View style={[{ width }, tailwind("flex-1 overflow-hidden")]}>
-        <View style={[{ width, height }]}>
-          <Image
-            style={[styles.image, tailwind("bg-gray-200")]}
-            source={{ uri: imageUrl }}
-            borderRadius={borderRadius}
-            resizeMode="cover"
-          />
+    <View>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => production.id && onPress?.(production.id, production)}
+        style={[styles.touchable, { flex: 1 }]}
+      >
+        <View style={[{ width }, tailwind("flex-1 overflow-hidden")]}>
+          <View style={[{ width, height }]}>
+            <Image
+              style={[styles.image, tailwind("bg-gray-200")]}
+              source={{ uri: imageUrl }}
+              borderRadius={borderRadius}
+              resizeMode="cover"
+            />
+          </View>
+          {!!RenderDescription && <RenderDescription production={production} />}
         </View>
-        {!!RenderDescription && <RenderDescription production={production} />}
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </View>
   )
 }
 

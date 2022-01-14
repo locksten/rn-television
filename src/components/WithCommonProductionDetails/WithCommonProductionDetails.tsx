@@ -1,9 +1,14 @@
-import { ProductionCastMembers } from "@components/Credits"
+import {
+  CreditsSection,
+  ProductionCastMembers,
+  ProductionCrewMembers,
+} from "@components/Credits"
 import { FavoriteOrAddToWatchlistButton } from "@components/FavoriteOrAddToWatchlistButton"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
 import { ProductionList } from "@components/ProductionList"
 import { ProductionTile } from "@components/ProductionTile"
 import { RatingRing } from "@components/RatingRing"
+import { Sections } from "@components/Sections"
 import { SeparatedBy } from "@components/SeparatedBy"
 import { VideoTile } from "@components/VideoTile"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
@@ -35,7 +40,7 @@ export const WithCommonProductionDetails: FC<{
         <MainSection type={type} detail={detail} />
         <VideoSection detail={detail} />
         {!!MiddleSlot && <MiddleSlot />}
-        <ProductionCastMembers detail={detail} />
+        <CreditsSection detail={detail} />
         <Recommendations type={type} detail={detail} />
         {children}
       </SeparatedBy>
