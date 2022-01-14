@@ -36,6 +36,7 @@ export const FavoriteOrAddToWatchlistButton: VFC<{
 
   return (
     <Pressable
+      disabled={isLoading}
       onPress={async () => {
         if (!session) {
           navigation.navigate("Account", {

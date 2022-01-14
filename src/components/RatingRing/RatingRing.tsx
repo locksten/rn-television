@@ -125,6 +125,7 @@ const useRatingInput = ({
   const ratingInputProps: Parameters<typeof RatingInput>[0] = {
     value,
     initialValue,
+    iseEditable: !isLoading,
     onDone,
     setIsEditing,
     onValueChange: setValue,
@@ -142,10 +143,18 @@ const useRatingInput = ({
 const RatingInput: FC<{
   value?: number
   initialValue?: number
+  iseEditable?: boolean
   onDone: () => void
   setIsEditing: (state: boolean) => void
   onValueChange: (value?: number) => void
-}> = ({ value, initialValue, onValueChange, onDone, setIsEditing }) => {
+}> = ({
+  value,
+  initialValue,
+  iseEditable,
+  onValueChange,
+  onDone,
+  setIsEditing,
+}) => {
   const [isBeforeFirstKeypress, setIsBeforeFirstKeypress] =
     useState<boolean>(false)
   const onChangeText = (text: string) =>
@@ -153,6 +162,7 @@ const RatingInput: FC<{
     onValueChange(text === "" ? undefined : Number(text))
   return (
     <TextInput
+      editable={iseEditable}
       style={[tailwind("h-full w-full opacity-0")]}
       onChangeText={onChangeText}
       value={value?.toString()}

@@ -81,26 +81,20 @@ export const useAccountProductionLists = () => {
   )?.map((list) => list.data)
 }
 
-export const fetchSetProductionAccountState = async (
+export const fetchSetProductionAccountState = (
   session: Session,
   type: "favorite" | "watchlist" | "rated",
   productionType: ProductionType,
   id: number,
   state: boolean,
-) => {
-  try {
-    await tmdb
-      .post(`account/${session.id}/${type}`, {
-        searchParams: sessionParam(session.token),
-        throwHttpErrors: true,
-        json: { media_type: productionType, media_id: id, [type]: state },
-      })
-      .json()
-    return true
-  } catch {
-    return false
-  }
-}
+) =>
+  tmdb
+    .post(`account/${session.id}/${type}`, {
+      searchParams: sessionParam(session.token),
+      throwHttpErrors: true,
+      json: { media_type: productionType, media_id: id, [type]: state },
+    })
+    .json()
 
 export type ProductionAccountStates = Partial<{
   id: number
@@ -109,22 +103,20 @@ export type ProductionAccountStates = Partial<{
   watchlist: boolean
 }>
 
-export const fetchRateProduction = async (
+export const fetchRateProduction = (
   session: Session,
   productionType: ProductionType,
   id: number,
   rating: number,
-) => {
-  try {
-    if (rating === 0) {
-      await tmdb
+) =>
+  rating === 0
+    ? tmdb
         .delete(`${productionType}/${id}/rating`, {
           searchParams: sessionParam(session.token),
           throwHttpErrors: true,
         })
         .json()
-    } else {
-      await tmdb
+    : tmdb
         .post(`${productionType}/${id}/rating`, {
           searchParams: sessionParam(session.token),
           throwHttpErrors: true,
@@ -133,12 +125,6 @@ export const fetchRateProduction = async (
           },
         })
         .json()
-    }
-    return true
-  } catch {
-    return false
-  }
-}
 
 export const processRatingForApi = (rating: number) =>
   Math.min(10, Math.max(0.5, Math.round(rating / 10 / 0.5) * 0.5))
