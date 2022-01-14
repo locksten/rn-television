@@ -49,11 +49,8 @@ const YouTubeVideoTile: VFC<{
           />
         </View>
         <View style={tailwind("pt-1")}>
-          <Text numberOfLines={1} style={tailwind("")}>
-            {video?.name}
-          </Text>
+          <Text numberOfLines={1}>{video?.name}</Text>
           <Text style={tailwind("font-light")}>{videoToShortDate(video)}</Text>
-          <Text>{video?.official}</Text>
         </View>
       </View>
     </TouchableOpacity>
