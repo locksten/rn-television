@@ -1,15 +1,11 @@
-import {
-  CreditsSection,
-  ProductionCastMembers,
-  ProductionCrewMembers,
-} from "@components/Credits"
+import { CreditsSection } from "@components/Credits"
 import { FavoriteOrAddToWatchlistButton } from "@components/FavoriteOrAddToWatchlistButton"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
 import { ProductionList } from "@components/ProductionList"
 import { ProductionTile } from "@components/ProductionTile"
 import { RatingRing } from "@components/RatingRing"
-import { Sections } from "@components/Sections"
 import { SeparatedBy } from "@components/SeparatedBy"
+import { TapToExpandText } from "@components/TapToExpandText"
 import { VideoTile } from "@components/VideoTile"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
 import { ProductionAccountStates } from "@queries/account"
@@ -22,9 +18,9 @@ import {
 } from "@queries/production"
 import { TV, TVDetail, TVDetailExtra } from "@queries/tv"
 import { useNavigation } from "@react-navigation/native"
-import React, { ComponentType, FC, useState, VFC } from "react"
-import { ScrollView, Text, TouchableWithoutFeedback, View } from "react-native"
-import { shortDate } from "src/utils"
+import React, { ComponentType, FC, VFC } from "react"
+import { ScrollView, Text, View } from "react-native"
+import { shortDate, withNonBreakingSpaces } from "src/utils"
 import tailwind from "tailwind-rn"
 
 const Separator = <View style={tailwind("h-4")} />
@@ -113,18 +109,12 @@ const Recommendations: VFC<{
 
 const Overview: VFC<{ detail: ProductionDetailExtra }> = ({
   detail: { overview },
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false)
-  return overview ? (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        setIsExpanded((isExpanded) => !isExpanded)
-      }}
-    >
-      <Text numberOfLines={isExpanded ? undefined : 4}>{overview}</Text>
-    </TouchableWithoutFeedback>
+}) =>
+  overview ? (
+    <TapToExpandText collapsedLines={4}>
+      <Text>{overview}</Text>
+    </TapToExpandText>
   ) : null
-}
 
 const HomePageLink: VFC<{ detail: ProductionDetailExtra }> = ({
   detail: { homepage },
@@ -170,13 +160,15 @@ const PosterSection: VFC<{
       <View style={tailwind("flex-1 pl-2")}>
         <ButtonSection type={type} detail={detail} />
         <View style={tailwind("flex-1 justify-start pt-4")}>
-          <Status detail={detail} />
-          <InProduction detail={detail} />
-          <ReleaseDate detail={detail} />
-          <AirDates detail={detail} />
-          <Runtime detail={detail} />
-          <EpisodeCount detail={detail} />
-          <ProductionCompanies type={type} detail={detail} />
+          <TapToExpandText collapsedLines={7}>
+            <Status detail={detail} />
+            <InProduction detail={detail} />
+            <ReleaseDate detail={detail} />
+            <AirDates detail={detail} />
+            <Runtime detail={detail} />
+            <EpisodeCount detail={detail} />
+            <ProductionCompanies detail={detail} />
+          </TapToExpandText>
           <HomePageLink detail={detail} />
         </View>
       </View>
@@ -185,40 +177,50 @@ const PosterSection: VFC<{
 }
 const Status: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
   const { status } = detail
-  return status ? <Text style={tailwind("font-bold")}>{status}</Text> : null
+  return status ? (
+    <Text style={tailwind("font-bold")}>
+      {status}
+      {"\n"}
+    </Text>
+  ) : null
 }
 
 const InProduction: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
   const { in_production } = detail as TVDetailExtra
   return in_production ? (
-    <Text style={tailwind("font-bold")}>In Production</Text>
+    <Text style={tailwind("font-bold")}>In Production{"\n"}</Text>
   ) : null
 }
 
 const AirDates: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
   const { first_air_date, last_air_date } = detail as TVDetailExtra
   return first_air_date ? (
-    <View style={tailwind("flex-row flex-wrap")}>
-      <Text>{`${shortDate(first_air_date)} `}</Text>
-      {!!last_air_date && <Text>{`to ${shortDate(last_air_date)}`}</Text>}
-    </View>
+    <Text>
+      {`${withNonBreakingSpaces(shortDate(first_air_date))} `}
+      {!!last_air_date && (
+        <Text>{`to ${withNonBreakingSpaces(shortDate(last_air_date))}`}</Text>
+      )}
+      {(first_air_date || last_air_date) && <Text>{"\n"}</Text>}
+    </Text>
   ) : null
 }
 
 const ReleaseDate: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
   const { release_date } = detail as MovieDetailExtra
   return release_date ? (
-    <Text>{`${shortDate(release_date)} Released`}</Text>
+    <Text>
+      {`${shortDate(release_date)} Released`}
+      {"\n"}
+    </Text>
   ) : null
 }
 
 const ProductionCompanies: VFC<{
-  type: ProductionType
   detail: ProductionDetailExtra
-}> = ({ type, detail }) => {
+}> = ({ detail }) => {
   const { production_companies } = detail
   return production_companies && production_companies.length !== 0 ? (
-    <Text numberOfLines={type === "tv" ? 1 : 3} style={tailwind("flex-wrap")}>
+    <Text style={tailwind("flex-wrap")}>
       {production_companies?.map((company) => company.name).join(", ")}
     </Text>
   ) : null
@@ -226,7 +228,11 @@ const ProductionCompanies: VFC<{
 
 const EpisodeCount: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
   const { number_of_episodes } = detail as TVDetailExtra
-  return number_of_episodes ? <Text>{number_of_episodes} Episodes</Text> : null
+  return number_of_episodes ? (
+    <Text>
+      {number_of_episodes} Episodes{"\n"}
+    </Text>
+  ) : null
 }
 
 const ButtonSection: VFC<{
@@ -281,7 +287,11 @@ const Ratings: VFC<{
 
 const Runtime: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
   const runtime = productionDetailToRuntime(detail)
-  return runtime ? <Text>{runtime} Runtime</Text> : null
+  return runtime ? (
+    <Text>
+      {runtime} Runtime{"\n"}
+    </Text>
+  ) : null
 }
 
 const VideoSection: VFC<{
