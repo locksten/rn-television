@@ -15,11 +15,13 @@ export const TVDetailScreen: VFC<
     params: { id, production },
   },
 }) => {
-  const detail = { ...{ id }, ...production, ...useTVDetailExtra(id).data }
+  const { data, isLoading } = useTVDetailExtra(id)
+  const detail = { ...{ id }, ...production, ...data }
   return (
     <WithCommonProductionDetails
       type="tv"
       detail={detail}
+      isLoading={isLoading}
       MiddleSlot={() => (
         <ProductionList
           title="Seasons"

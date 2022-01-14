@@ -6,10 +6,9 @@ import tailwind from "tailwind-rn"
 export const HorizontalFlatList: <T>(
   props: FlatListProps<T> & {
     title?: string | (() => JSX.Element)
-    renderEmpty?: boolean
   },
-) => React.ReactElement | null = ({ title, renderEmpty = false, ...props }) =>
-  renderEmpty || (props.data && props.data.length !== 0) ? (
+) => React.ReactElement | null = ({ title, ...props }) =>
+  props.data && props.data.length !== 0 ? (
     <View>
       {typeof title === "string" && title ? (
         <SectionTitle title={title} />

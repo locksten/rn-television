@@ -6,7 +6,7 @@ import { ProductionTile } from "@components/ProductionTile"
 import { RatingRing } from "@components/RatingRing"
 import { SeparatedBy } from "@components/SeparatedBy"
 import { TapToExpandText } from "@components/TapToExpandText"
-import { VideoTile } from "@components/VideoTile"
+import { VideoTile, VideoTileHeightSpacer } from "@components/VideoTile"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
 import { ProductionAccountStates } from "@queries/account"
 import { Movie, MovieDetail, MovieDetailExtra } from "@queries/movie"
@@ -28,13 +28,14 @@ const Separator = <View style={tailwind("h-4")} />
 export const WithCommonProductionDetails: FC<{
   MiddleSlot?: ComponentType
   type: ProductionType
+  isLoading: boolean
   detail: ProductionDetailExtra & { id: number }
-}> = ({ MiddleSlot, type, detail, children }) => {
+}> = ({ MiddleSlot, type, detail, isLoading, children }) => {
   return (
     <ScrollView>
       <SeparatedBy separator={Separator} start end>
         <MainSection type={type} detail={detail} />
-        <VideoSection detail={detail} />
+        <VideoSection detail={detail} isLoading={isLoading} />
         {!!MiddleSlot && <MiddleSlot />}
         <CreditsSection detail={detail} />
         <Recommendations type={type} detail={detail} />
@@ -295,11 +296,16 @@ const Runtime: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
 }
 
 const VideoSection: VFC<{
+  isLoading: boolean
   detail: ProductionDetailExtra & { id: number }
-}> = ({ detail }) => (
-  <HorizontalFlatList
-    data={detail.videos?.results}
-    renderItem={({ item }) => <VideoTile video={item} />}
-    keyExtractor={(item) => `${item.id}`}
-  />
-)
+}> = ({ detail: { videos }, isLoading }) =>
+  isLoading || !!videos?.results ? (
+    <View style={tailwind("flex-row")}>
+      <HorizontalFlatList
+        data={videos?.results}
+        renderItem={({ item }) => <VideoTile video={item} />}
+        keyExtractor={(item) => `${item.id}`}
+      />
+      <VideoTileHeightSpacer />
+    </View>
+  ) : null

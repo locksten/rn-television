@@ -13,6 +13,13 @@ export const MovieDetailScreen: VFC<
     params: { id, production },
   },
 }) => {
-  const detail = { ...{ id }, ...production, ...useMovieDetailExtra(id).data }
-  return <WithCommonProductionDetails type="movie" detail={detail} />
+  const { data, isLoading } = useMovieDetailExtra(id)
+  const detail = { ...{ id }, ...production, ...data }
+  return (
+    <WithCommonProductionDetails
+      type="movie"
+      detail={detail}
+      isLoading={isLoading}
+    />
+  )
 }

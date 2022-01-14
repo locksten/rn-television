@@ -37,7 +37,7 @@ const YouTubeVideoTile: VFC<{
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={() => navigation.push("YouTube", { meta, video })}
-      style={styles.touchable}
+      style={[styles.touchable, { width, height }]}
     >
       <View style={{ width }}>
         <View style={{ width, height }}>
@@ -56,6 +56,12 @@ const YouTubeVideoTile: VFC<{
     </TouchableOpacity>
   )
 }
+
+export const VideoTileHeightSpacer: VFC = () => (
+  <View style={tailwind("w-0 opacity-0 ")}>
+    <YouTubeVideoTile video={{ name: "", key: "", site: "YouTube" }} />
+  </View>
+)
 
 const borderRadius = 8
 
