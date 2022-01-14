@@ -37,16 +37,23 @@ export const CreditTile: VFC<
             resizeMode="cover"
           />
         </View>
-        <Text numberOfLines={2} style={tailwind("font-bold")}>
-          {props.credit.name}
-        </Text>
-        <Text numberOfLines={2}>
-          {props.type === "cast" ? props.credit.character : props.credit.job}
+        <Text numberOfLines={4}>
+          <Text style={tailwind("font-bold")}>{props.credit.name}</Text>
+          {"\n"}
+          <Text>
+            {props.type === "cast" ? props.credit.character : props.credit.job}
+          </Text>
         </Text>
       </View>
     </TouchableOpacity>
   )
 }
+
+export const CrewMemberHeightSpacer: VFC = () => (
+  <View style={tailwind("w-0 opacity-0")}>
+    <CreditTile type={"crew"} credit={{ name: "\n\n\n" }} />
+  </View>
+)
 
 const borderRadius = 8
 

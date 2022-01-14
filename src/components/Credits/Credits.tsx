@@ -1,9 +1,11 @@
-import { CreditTile } from "@components/CreditTile"
+import { CreditTile, CrewMemberHeightSpacer } from "@components/CreditTile"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
 import { Sections } from "@components/Sections"
 import { combineSameCrewMembers, Credit, CreditType } from "@queries/credit"
 import { ProductionDetail, ProductionDetailExtra } from "@queries/production"
 import React, { VFC } from "react"
+import { View } from "react-native"
+import tailwind from "tailwind-rn"
 
 export const CreditsSection: VFC<{
   detail: ProductionDetail
@@ -40,14 +42,14 @@ const CreditList: VFC<{
   title?: string
   type: CreditType
   credits: Credit[]
-}> = ({ title, type, credits }) => {
-  console.log(credits.filter(({ name }) => name && /Francis/.test(name)))
-  return (
+}> = ({ title, type, credits }) => (
+  <View style={tailwind("flex-row")}>
+    <CrewMemberHeightSpacer />
     <HorizontalFlatList
       title={title}
       data={type === "cast" ? credits : combineSameCrewMembers(credits)}
       renderItem={({ item }) => <CreditTile type={type} credit={item} />}
       keyExtractor={(item) => `${item.credit_id}`}
     />
-  )
-}
+  </View>
+)
