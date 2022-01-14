@@ -5,11 +5,14 @@ export const sessionParam = (sessionToken: string) => ({
   session_id: sessionToken,
 })
 
+const tmdbAccessToken = Constants.manifest?.extra?.tmdbAccessToken
+if (!tmdbAccessToken) console.error("TMDB Access Token missing")
+
 export const tmdb = ky.create({
   prefixUrl: "https://api.themoviedb.org/3",
   throwHttpErrors: false,
   headers: {
-    Authorization: `Bearer ${Constants.manifest?.extra?.tmdbAccessToken}`,
+    Authorization: `Bearer ${tmdbAccessToken}`,
     "Content-Type": "application/json;charset=utf-8",
   },
 })
