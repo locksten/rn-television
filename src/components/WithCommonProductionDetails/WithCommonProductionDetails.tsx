@@ -9,8 +9,10 @@ import { TapToExpandText } from "@components/TapToExpandText"
 import { VideoTile, VideoTileHeightSpacer } from "@components/VideoTile"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
 import { ProductionAccountStates } from "@queries/account"
+import { useProductionGenres } from "@queries/genre"
 import { Movie, MovieDetail, MovieDetailExtra } from "@queries/movie"
 import {
+  Production,
   ProductionDetailExtra,
   ProductionType,
   useProductionAccountStates,
@@ -29,7 +31,7 @@ export const WithCommonProductionDetails: FC<{
   MiddleSlot?: ComponentType
   type: ProductionType
   isLoading: boolean
-  detail: ProductionDetailExtra & { id: number }
+  detail: Production & (ProductionDetailExtra & { id: number })
 }> = ({ MiddleSlot, type, detail, isLoading, children }) => {
   return (
     <ScrollView>
@@ -57,7 +59,7 @@ const MainSection: VFC<{
         <Tagline detail={detail} />
       </View>
       <View>
-        <Genres detail={detail} />
+        <Genres detail={detail} type={type} />
         <Overview detail={detail} />
       </View>
     </SeparatedBy>
@@ -81,11 +83,17 @@ const Tagline: VFC<{
   ) : null
 
 const Genres: VFC<{
-  detail: ProductionDetailExtra
-}> = ({ detail: { genres } }) =>
-  genres && genres.length !== 0 ? (
-    <Text style={tailwind("pb-2")}>{genres.map((g) => g.name).join(", ")}</Text>
+  type: ProductionType
+  detail: Production
+}> = ({ detail: { genre_ids }, type }) => {
+  const allGenres = useProductionGenres(type)
+  const genres = genre_ids
+    ?.map((id) => allGenres?.find((g) => g.id === id)?.name)
+    .filter((g) => g)
+  return genres && genres.length !== 0 ? (
+    <Text style={tailwind("pb-2")}>{genres.join(", ")}</Text>
   ) : null
+}
 
 const Recommendations: VFC<{
   type: ProductionType

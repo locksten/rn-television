@@ -1,5 +1,6 @@
 import { RootTabNavigator } from "@components/RootTabNavigator"
 import { useAuthProvider } from "@queries/auth"
+import { GenreProvider } from "@queries/genre"
 import { AppQueryClientProvider } from "@queries/queryClient"
 import { NavigationContainer } from "@react-navigation/native"
 import { StatusBar } from "expo-status-bar"
@@ -24,7 +25,9 @@ const RootNavigator: VFC = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <AuthContextProvider>
-        <RootTabNavigator />
+        <GenreProvider>
+          <RootTabNavigator />
+        </GenreProvider>
       </AuthContextProvider>
     </SafeAreaView>
   )
