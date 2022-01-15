@@ -15,42 +15,58 @@ export const VideoTile: VFC<{
     />
   ) : null
 
-const YouTubeVideoTile: VFC<{
-  video: Video & { site: "YouTube"; key: string }
-}> = ({ video }) => {
+const YouTubeVideoTile: VFC<
+  | {
+      video: Video & { site: "YouTube"; key: string }
+      placeholder?: false
+    }
+  | { placeholder: true }
+> = (props) => {
   const navigation = useNavigation<CommonStackNavigationProp>()
   const [meta, setMeta] = useState<YoutubeMeta | undefined>()
 
   useEffect(() => {
     ;(async () => {
       try {
-        setMeta(await getYoutubeMeta(video.key))
+        !props.placeholder && setMeta(await getYoutubeMeta(props.video.key))
       } catch {
         return
       }
     })()
-  }, [video.key])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.placeholder ?? props?.video.key])
 
   const height = 128
   const width = height * (16 / 9)
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={() => navigation.push("YouTube", { meta, video })}
-      style={[styles.touchable, { width, height }]}
+      onPress={() =>
+        !props.placeholder &&
+        navigation.push("YouTube", { meta, video: props.video })
+      }
+      style={[styles.touchable]}
     >
       <View style={{ width }}>
         <View style={{ width, height }}>
-          <Image
-            style={[styles.image, tailwind("bg-gray-200")]}
-            source={{ uri: meta?.thumbnail_url }}
-            borderRadius={borderRadius}
-            resizeMode="cover"
-          />
+          {!!meta?.thumbnail_url && (
+            <Image
+              style={[styles.image, tailwind("bg-gray-200")]}
+              source={{
+                uri: meta.thumbnail_url,
+              }}
+              borderRadius={borderRadius}
+              resizeMode="cover"
+            />
+          )}
         </View>
         <View style={tailwind("pt-1")}>
-          <Text numberOfLines={1}>{video?.name}</Text>
-          <Text style={tailwind("font-light")}>{videoToShortDate(video)}</Text>
+          <Text numberOfLines={1}>
+            {props.placeholder ? "" : props.video.name}
+          </Text>
+          <Text style={tailwind("font-light")}>
+            {props.placeholder ? "" : videoToShortDate(props.video)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -59,7 +75,7 @@ const YouTubeVideoTile: VFC<{
 
 export const VideoTileHeightSpacer: VFC = () => (
   <View style={tailwind("w-0 opacity-0 ")}>
-    <YouTubeVideoTile video={{ name: "", key: "", site: "YouTube" }} />
+    <YouTubeVideoTile placeholder />
   </View>
 )
 
