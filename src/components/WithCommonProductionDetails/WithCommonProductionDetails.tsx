@@ -25,14 +25,13 @@ import { ScrollView, Text, View } from "react-native"
 import { shortDate, withNonBreakingSpaces } from "src/utils"
 import tailwind from "tailwind-rn"
 
-const Separator = <View style={tailwind("h-4")} />
-
 export const WithCommonProductionDetails: FC<{
   MiddleSlot?: ComponentType
   type: ProductionType
   isLoading: boolean
   detail: Production & (ProductionDetailExtra & { id: number })
 }> = ({ MiddleSlot, type, detail, isLoading, children }) => {
+  const Separator = <View style={tailwind("h-4")} />
   return (
     <ScrollView>
       <SeparatedBy separator={Separator} start end>
@@ -52,14 +51,15 @@ const MainSection: VFC<{
   detail: ProductionDetailExtra & { id: number }
 }> = ({ type, detail }) => {
   return (
-    <SeparatedBy style={tailwind("px-4")} separator={Separator}>
-      <View>
-        <PosterSection type={type} detail={detail} />
+    <View style={tailwind("px-4")}>
+      <PosterSection type={type} detail={detail} />
+      <View style={tailwind("h-1")} />
       <TitleAndTagline detail={detail} />
-        <Genres detail={detail} type={type} />
-        <Overview detail={detail} />
-      </View>
-    </SeparatedBy>
+      <View style={tailwind("h-2")} />
+      <Genres detail={detail} type={type} />
+      <View style={tailwind("h-2")} />
+      <Overview detail={detail} />
+    </View>
   )
 }
 
@@ -88,9 +88,7 @@ const Genres: VFC<{
   const genres = genre_ids
     ?.map((id) => allGenres?.find((g) => g.id === id)?.name)
     .filter((g) => g)
-  return genres && genres.length !== 0 ? (
-    <Text style={tailwind("pb-2")}>{genres.join(", ")}</Text>
-  ) : null
+  return genres && genres.length !== 0 ? <Text>{genres.join(", ")}</Text> : null
 }
 
 const Recommendations: VFC<{
