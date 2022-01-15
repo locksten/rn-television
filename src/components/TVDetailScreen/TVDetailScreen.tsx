@@ -1,7 +1,7 @@
 import { ProductionList } from "@components/ProductionList"
 import { WithCommonProductionDetails } from "@components/WithCommonProductionDetails"
 import { CommonStackParams } from "@components/WithCommonStackScreens"
-import { useTVDetailExtra } from "@queries/tv"
+import { TVDetailExtra, useTVDetailExtra } from "@queries/tv"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { VFC } from "react"
 import { Text, View } from "react-native"
@@ -16,7 +16,12 @@ export const TVDetailScreen: VFC<
   },
 }) => {
   const { data, isLoading } = useTVDetailExtra(id)
-  const detail = { ...{ id }, ...production, ...data }
+  const detail: TVDetailExtra & { id: number } = {
+    ...{ id },
+    ...production,
+    ...{ first_air_date: undefined },
+    ...data,
+  }
   return (
     <WithCommonProductionDetails
       type="tv"
