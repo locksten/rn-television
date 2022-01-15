@@ -55,10 +55,7 @@ const MainSection: VFC<{
     <SeparatedBy style={tailwind("px-4")} separator={Separator}>
       <View>
         <PosterSection type={type} detail={detail} />
-        <Title detail={detail} />
-        <Tagline detail={detail} />
-      </View>
-      <View>
+      <TitleAndTagline detail={detail} />
         <Genres detail={detail} type={type} />
         <Overview detail={detail} />
       </View>
@@ -66,21 +63,22 @@ const MainSection: VFC<{
   )
 }
 
-const Title: VFC<{
+const TitleAndTagline: VFC<{
   detail: ProductionDetailExtra
 }> = ({ detail }) => {
   const title = (detail as Movie).title || (detail as TV).name
-  return title ? (
-    <Text style={tailwind("font-bold text-lg leading-6 pt-1")}>{title}</Text>
-  ) : null
+  const tagline = detail.tagline
+  return (
+    <TapToExpandText collapsedLines={2}>
+      <Text style={tailwind("font-bold text-lg leading-5")}>
+        {title ?? ""}
+        <Text style={tailwind("font-bold text-base text-gray-500 leading-5")}>
+          {tagline ? `  ${tagline}` : "\n"}
+        </Text>
+      </Text>
+    </TapToExpandText>
+  )
 }
-
-const Tagline: VFC<{
-  detail: ProductionDetailExtra
-}> = ({ detail: { tagline } }) =>
-  tagline ? (
-    <Text style={tailwind("font-bold text-gray-500")}>{tagline}</Text>
-  ) : null
 
 const Genres: VFC<{
   type: ProductionType
