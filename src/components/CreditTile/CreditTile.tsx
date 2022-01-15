@@ -8,16 +8,23 @@ const profileImageUrl = (path?: string) =>
   path && tmdbImagePrefixUrl + "w185" + path
 
 export const CreditTile: VFC<
+  | ({ placeholder?: boolean } & (
+      | {
+          type: "cast"
+          credit: CastMember
+        }
+      | {
+          type: "crew"
+          credit: CrewMember
+        }
+    ))
   | {
-      type: "cast"
-      credit: CastMember
-    }
-  | {
-      type: "crew"
-      credit: CrewMember
+      placeholder: true
     }
 > = (props) => {
-  const imageUrl = profileImageUrl(props.credit.profile_path)
+  const imageUrl = profileImageUrl(
+    props.placeholder ? "" : props.credit.profile_path,
+  )
   const height = 128
   const width = height / 1.5
   return (
@@ -26,22 +33,30 @@ export const CreditTile: VFC<
       onPress={() => {
         return
       }}
-      style={styles.touchable}
+      style={[styles.touchable, tailwind("")]}
     >
-      <View style={[{ width }, tailwind("flex-1 overflow-hidden")]}>
+      <View style={[{ width }, tailwind("overflow-hidden")]}>
         <View style={[{ width, height }]}>
-          <Image
-            style={[styles.image, tailwind("bg-gray-200")]}
-            source={{ uri: imageUrl }}
-            borderRadius={borderRadius}
-            resizeMode="cover"
-          />
+          {!!imageUrl && (
+            <Image
+              style={[styles.image, tailwind("bg-gray-200")]}
+              source={{ uri: imageUrl }}
+              borderRadius={borderRadius}
+              resizeMode="cover"
+            />
+          )}
         </View>
         <Text numberOfLines={4}>
-          <Text style={tailwind("font-bold")}>{props.credit.name}</Text>
+          <Text style={tailwind("font-bold")}>
+            {props.placeholder ? "\n" : props.credit.name}
+          </Text>
           {"\n"}
           <Text>
-            {props.type === "cast" ? props.credit.character : props.credit.job}
+            {props.placeholder
+              ? "\n"
+              : props.type === "cast"
+              ? props.credit.character
+              : props.credit.job}
           </Text>
         </Text>
       </View>
@@ -51,7 +66,7 @@ export const CreditTile: VFC<
 
 export const CrewMemberHeightSpacer: VFC = () => (
   <View style={tailwind("w-0 opacity-0")}>
-    <CreditTile type={"crew"} credit={{ name: "\n\n\n" }} />
+    <CreditTile placeholder />
   </View>
 )
 
