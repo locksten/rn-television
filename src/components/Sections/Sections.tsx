@@ -21,7 +21,7 @@ export const Sections: VFC<{
 
   return (
     <View>
-      <View style={tailwind("flex-1 flex-row")}>
+      <View style={tailwind("flex-row")}>
         {Object.keys(sections).map((title, idx) => {
           return (
             <View key={title} style={tailwind(`flex-row items-center`)}>
