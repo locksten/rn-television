@@ -1,95 +1,70 @@
+import { AppImage } from "@components/AppImage"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
 import { Video, videoToShortDate } from "@queries/video"
 import { useNavigation } from "@react-navigation/native"
 import React, { useEffect, useState, VFC } from "react"
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Text, View } from "react-native"
 import { getYoutubeMeta, YoutubeMeta } from "react-native-youtube-iframe"
 import tailwind from "tailwind-rn"
 
 export const VideoTile: VFC<{
   video: Video
-}> = ({ video }) =>
+  height?: number
+}> = ({ video, height }) =>
   video?.site === "YouTube" && video?.key ? (
     <YouTubeVideoTile
       video={{ ...video, ...{ site: video.site, key: video.key } }}
+      height={height}
     />
   ) : null
 
-const YouTubeVideoTile: VFC<
-  | {
-      video: Video & { site: "YouTube"; key: string }
-      placeholder?: false
-    }
-  | { placeholder: true }
-> = (props) => {
+const YouTubeVideoTile: VFC<{
+  video: Video & { site: "YouTube"; key: string }
+  height?: number
+}> = ({ video, height }) => {
+  const { key, name } = video
   const navigation = useNavigation<CommonStackNavigationProp>()
   const [meta, setMeta] = useState<YoutubeMeta | undefined>()
 
   useEffect(() => {
     ;(async () => {
       try {
-        !props.placeholder && setMeta(await getYoutubeMeta(props.video.key))
+        setMeta(await getYoutubeMeta(key))
       } catch {
         return
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.placeholder ?? props?.video.key])
+  }, [key])
 
-  const height = 128
-  const width = height * (16 / 9)
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={() =>
-        !props.placeholder &&
-        navigation.push("YouTube", { meta, video: props.video })
-      }
-      style={[styles.touchable]}
-    >
-      <View style={{ width }}>
-        <View style={{ width, height }}>
-          {!!meta?.thumbnail_url && (
-            <Image
-              style={[styles.image, tailwind("bg-gray-200")]}
-              source={{
-                uri: meta.thumbnail_url,
-              }}
-              borderRadius={borderRadius}
-              resizeMode="cover"
-            />
-          )}
-        </View>
+    <AppImage
+      vertical
+      aspectRatio={16 / 9}
+      size={height}
+      uri={meta?.thumbnail_url}
+      onPress={() => navigation.push("YouTube", { meta, video })}
+      renderEnd={() => (
         <View style={tailwind("pt-1")}>
-          <Text numberOfLines={1}>
-            {props.placeholder ? "" : props.video.name}
-          </Text>
-          <Text style={tailwind("font-light")}>
-            {props.placeholder ? "" : videoToShortDate(props.video)}
-          </Text>
+          <Text numberOfLines={1}>{name}</Text>
+          <Text style={tailwind("font-light")}>{videoToShortDate(video)}</Text>
         </View>
-      </View>
-    </TouchableOpacity>
+      )}
+    />
   )
 }
 
-export const VideoTileHeightSpacer: VFC = () => (
-  <View style={tailwind("w-0 opacity-0 ")}>
-    <YouTubeVideoTile placeholder />
+export const VideoTileHeightPlaceholder: VFC<{ height?: number }> = ({
+  height,
+}) => (
+  <View style={tailwind("w-0 opacity-0")}>
+    <VideoTile
+      height={height}
+      video={{
+        site: "YouTube",
+        key: " ",
+        name: "\n",
+        published_at: "1970-01-01",
+      }}
+    />
   </View>
 )
-
-const borderRadius = 8
-
-const styles = StyleSheet.create({
-  touchable: {
-    borderRadius,
-  },
-  image: {
-    aspectRatio: 16 / 9,
-    borderWidth: 0.5,
-    borderColor: "#00000010",
-    width: "100%",
-    height: "100%",
-  },
-})

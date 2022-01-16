@@ -1,4 +1,8 @@
-import { ProductionList } from "@components/ProductionList"
+import { HorizontalFlatList } from "@components/HorizontalFlatList"
+import {
+  ProductionTile,
+  ProductionTileHeightPlaceholder,
+} from "@components/ProductionTile"
 import { WithCommonProductionDetails } from "@components/WithCommonProductionDetails"
 import { CommonStackParams } from "@components/WithCommonStackScreens"
 import { TVDetailExtra, useTVDetailExtra } from "@queries/tv"
@@ -27,21 +31,46 @@ export const TVDetailScreen: VFC<
       type="tv"
       detail={detail}
       isLoading={isLoading}
-      MiddleSlot={() => (
-        <ProductionList
-          title="Seasons"
-          productions={detail.seasons}
-          RenderDescription={({ production }) => (
-            <View>
-              <Text numberOfLines={2} style={tailwind("font-bold")}>
-                {production.name}
-              </Text>
-              <Text numberOfLines={1}>{production.episode_count} episodes</Text>
-              <Text numberOfLines={1}>{shortDate(production.air_date)}</Text>
-            </View>
-          )}
-        />
-      )}
+      MiddleSlot={() => <Seasons detail={detail} isLoading={isLoading} />}
     />
   )
+}
+
+const Seasons: VFC<{ isLoading: boolean; detail: TVDetailExtra }> = ({
+  detail,
+  isLoading,
+}) => {
+  const height = 160
+  return isLoading || !!(detail.seasons?.length !== 0) ? (
+    <View style={tailwind("flex-row")}>
+      <ProductionTileHeightPlaceholder
+        height={height}
+        renderDescription={() => (
+          <Text style={tailwind("font-bold")}>{"\n\n\n"}</Text>
+        )}
+      />
+      <HorizontalFlatList
+        title="Seasons"
+        data={detail.seasons}
+        renderItem={({ item }) => (
+          <ProductionTile
+            production={item}
+            height={height}
+            renderDescription={({ name, episode_count, air_date }) => (
+              <View>
+                <Text numberOfLines={1} style={tailwind("font-bold")}>
+                  {name}
+                </Text>
+                <Text numberOfLines={1}>
+                  {episode_count ? `${episode_count} episodes` : undefined}
+                </Text>
+                <Text numberOfLines={1}>{shortDate(air_date)}</Text>
+              </View>
+            )}
+          />
+        )}
+        keyExtractor={(item) => `${item.id}`}
+      />
+    </View>
+  ) : null
 }

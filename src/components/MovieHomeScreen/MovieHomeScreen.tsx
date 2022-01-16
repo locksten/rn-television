@@ -1,4 +1,4 @@
-import { MovieProductionLists } from "@components/ProductionLists"
+import { GlobalProductionLists } from "@components/ProductionLists"
 import { RootTabs } from "@components/RootTabNavigator"
 import {
   CommonStackParams,
@@ -33,9 +33,13 @@ export const MovieHomeScreen: VFC<
 const HomeScreen: VFC<
   NativeStackScreenProps<MovieHomeScreenParams, "Home">
 > = ({ navigation }) => (
-  <MovieProductionLists
+  <GlobalProductionLists
+    type="movie"
     onPress={(id, production) => {
-      navigation.push("MovieDetail", { id, production })
+      navigation.push("MovieDetail", {
+        id,
+        production,
+      })
     }}
   />
 )

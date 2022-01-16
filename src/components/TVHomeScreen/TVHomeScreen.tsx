@@ -1,4 +1,4 @@
-import { TVProductionLists } from "@components/ProductionLists"
+import { GlobalProductionLists } from "@components/ProductionLists"
 import { RootTabs } from "@components/RootTabNavigator"
 import {
   CommonStackParams,
@@ -31,7 +31,8 @@ export const TVHomeScreen: VFC<BottomTabScreenProps<RootTabs, "TV">> = () => {
 const HomeScreen: VFC<NativeStackScreenProps<TVHomeScreenParams, "Home">> = ({
   navigation,
 }) => (
-  <TVProductionLists
+  <GlobalProductionLists
+    type="tv"
     onPress={(id, production) => {
       navigation.push("TVDetail", {
         id,

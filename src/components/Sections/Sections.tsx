@@ -1,21 +1,19 @@
-import { Section } from "@components/Section"
 import { SectionTitle, sectionTitleStyles } from "@components/SectionTitle"
-import React, { useState, VFC } from "react"
+import React, { useEffect, useState, VFC } from "react"
 import { TouchableOpacity, View } from "react-native"
 import tailwind from "tailwind-rn"
 
 export const Sections: VFC<{
-  sections: ({ title: string; Section: () => JSX.Element } & Parameters<
-    typeof Section
-  >[0])[]
+  sections: { [title: string]: () => JSX.Element }
 }> = ({ sections }) => {
-  const [activeTitle, setActiveTitle] = useState<string | undefined>(
-    sections[0]?.title,
-  )
+  const [activeTitle, setActiveTitle] = useState<string | undefined>()
+  useEffect(() => {
+    setActiveTitle(Object.keys(sections)[0])
+  }, [sections])
 
-  const ActiveSection = sections.find(
-    ({ title }) => title === activeTitle,
-  )?.Section
+  if (Object.keys(sections).length === 0) return null
+
+  const ActiveSection = activeTitle ? sections[activeTitle] : undefined
 
   const hPad = sectionTitleStyles.horizontalPadding
   const vPad = sectionTitleStyles.verticalPadding
@@ -24,7 +22,7 @@ export const Sections: VFC<{
   return (
     <View>
       <View style={tailwind("flex-1 flex-row")}>
-        {sections.map(({ title }, idx) => {
+        {Object.keys(sections).map((title, idx) => {
           return (
             <View key={title} style={tailwind(`flex-row items-center`)}>
               <TouchableOpacity onPress={() => setActiveTitle(title)}>
@@ -41,7 +39,7 @@ export const Sections: VFC<{
                   <SectionTitle key={title} title={title} padding={false} />
                 </View>
               </TouchableOpacity>
-              {idx !== sections.length - 1 && (
+              {idx !== Object.keys(sections).length - 1 && (
                 <View style={tailwind("pb-1")}>
                   <View
                     style={[

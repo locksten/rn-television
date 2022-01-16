@@ -12,6 +12,7 @@ import React, { FC, useState, VFC } from "react"
 import { Text, TextInput, View } from "react-native"
 import * as Svg from "react-native-svg"
 import { useMutation, useQueryClient } from "react-query"
+import { colors } from "src/theme"
 import tailwind from "tailwind-rn"
 
 export const RatingRing: VFC<{

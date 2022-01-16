@@ -9,12 +9,8 @@ export const HorizontalFlatList: <T>(
   },
 ) => React.ReactElement | null = ({ title, ...props }) =>
   props.data && props.data.length !== 0 ? (
-    <View>
-      {typeof title === "string" && title ? (
-        <SectionTitle title={title} />
-      ) : (
-        title
-      )}
+    <View style={tailwind("flex-1")}>
+      {typeof title === "string" ? <SectionTitle title={title} /> : title?.()}
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}

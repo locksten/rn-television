@@ -1,12 +1,14 @@
 import { CreditsSection } from "@components/Credits"
 import { FavoriteOrAddToWatchlistButton } from "@components/FavoriteOrAddToWatchlistButton"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
-import { ProductionList } from "@components/ProductionList"
-import { ProductionTile } from "@components/ProductionTile"
+import {
+  ProductionTile,
+  ProductionTileHeightPlaceholder,
+} from "@components/ProductionTile"
 import { RatingRing } from "@components/RatingRing"
 import { SeparatedBy } from "@components/SeparatedBy"
 import { TapToExpandText } from "@components/TapToExpandText"
-import { VideoTile, VideoTileHeightSpacer } from "@components/VideoTile"
+import { VideoTile, VideoTileHeightPlaceholder } from "@components/VideoTile"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
 import { ProductionAccountStates } from "@queries/account"
 import { useProductionGenres } from "@queries/genre"
@@ -36,10 +38,15 @@ export const WithCommonProductionDetails: FC<{
     <ScrollView>
       <SeparatedBy separator={Separator} start end>
         <MainSection type={type} detail={detail} />
-        <VideoSection detail={detail} isLoading={isLoading} />
+        <VideoSection detail={detail} isLoading={isLoading} height={120} />
         {!!MiddleSlot && <MiddleSlot />}
-        <CreditsSection detail={detail} />
-        <Recommendations type={type} detail={detail} />
+        <CreditsSection detail={detail} isLoading={isLoading} height={120} />
+        <Recommendations
+          type={type}
+          detail={detail}
+          height={160}
+          isLoading={isLoading}
+        />
         {children}
       </SeparatedBy>
     </ScrollView>
@@ -68,15 +75,19 @@ const TitleAndTagline: VFC<{
 }> = ({ detail }) => {
   const title = (detail as Movie).title || (detail as TV).name
   const tagline = detail.tagline
+  const tallerStyle = tailwind("font-bold text-lg leading-5")
   return (
-    <TapToExpandText collapsedLines={2}>
-      <Text style={tailwind("font-bold text-lg leading-5")}>
-        {title ?? ""}
-        <Text style={tailwind("font-bold text-base text-gray-500 leading-5")}>
-          {tagline ? `  ${tagline}` : "\n"}
+    <View style={tailwind("flex-row")}>
+      <Text style={[tallerStyle, tailwind("w-0")]}>{"\n"}</Text>
+      <TapToExpandText collapsedLines={2}>
+        <Text style={tallerStyle}>
+          {title}
+          <Text style={tailwind("font-bold text-base text-gray-500 leading-5")}>
+            {!!tagline && `  ${tagline}`}
+          </Text>
         </Text>
-      </Text>
-    </TapToExpandText>
+      </TapToExpandText>
+    </View>
   )
 }
 
@@ -93,32 +104,49 @@ const Genres: VFC<{
 
 const Recommendations: VFC<{
   type: ProductionType
+  isLoading: boolean
   detail: ProductionDetailExtra & { id: number }
-}> = ({ type, detail }) => {
+  height: number
+}> = ({ type, isLoading, detail, height }) => {
   const navigation = useNavigation<CommonStackNavigationProp>()
   const recommendations = useProductionRecommendations(type, detail.id).data
     ?.results
-  return (
-    <ProductionList
-      title="Recommendations"
-      productions={recommendations}
-      onPress={(id, production) =>
-        navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
-          id,
-          production,
-        })
-      }
-    />
-  )
+  return isLoading || !!(recommendations?.length !== 0) ? (
+    <View style={tailwind("flex-row")}>
+      <ProductionTileHeightPlaceholder height={height} />
+      <HorizontalFlatList
+        title="Recommendations"
+        data={recommendations}
+        renderItem={({ item }) => (
+          <ProductionTile
+            height={height}
+            production={item}
+            onPress={(id, production) =>
+              navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
+                id,
+                production,
+              })
+            }
+          />
+        )}
+        keyExtractor={(item) => `${item.id}`}
+      />
+    </View>
+  ) : null
 }
 
 const Overview: VFC<{ detail: ProductionDetailExtra }> = ({
   detail: { overview },
 }) =>
   overview ? (
-    <TapToExpandText collapsedLines={4}>
-      <Text>{overview}</Text>
-    </TapToExpandText>
+    <View style={tailwind("flex-row")}>
+      <View style={tailwind("w-0")}>
+        <Text>{"\n\n\n"}</Text>
+      </View>
+      <TapToExpandText collapsedLines={4}>
+        <Text>{overview}</Text>
+      </TapToExpandText>
+    </View>
   ) : null
 
 const HomePageLink: VFC<{ detail: ProductionDetailExtra }> = ({
@@ -150,7 +178,7 @@ const productionDetailToRuntime = (detail: ProductionDetailExtra) => {
   if (!runtime) return undefined
   const hours = Math.round(runtime / 60)
   const minutes = Math.round(runtime % 60)
-  return hours ? `${hours}h ${minutes}m` : `${minutes}m`
+  return hours ? `${hours}h ${minutes ? `${minutes}m` : ""}` : `${minutes}m`
 }
 
 const PosterSection: VFC<{
@@ -159,13 +187,13 @@ const PosterSection: VFC<{
 }> = ({ type, detail }) => {
   return (
     <View style={tailwind("flex-row")}>
-      <View>
-        <ProductionTile key={detail.id} production={detail} height={228} />
+      <View style={[tailwind("flex-row")]}>
+        <ProductionTile key={detail.id} production={detail} height={245} />
       </View>
       <View style={tailwind("flex-1 pl-2")}>
         <ButtonSection type={type} detail={detail} />
         <View style={tailwind("flex-1 justify-start pt-4")}>
-          <TapToExpandText collapsedLines={7}>
+          <TapToExpandText collapsedLines={8}>
             <Status detail={detail} />
             <InProduction detail={detail} />
             <ReleaseDate detail={detail} />
@@ -245,11 +273,8 @@ const ButtonSection: VFC<{
   detail: ProductionDetailExtra & { id: number }
 }> = ({ type, detail }) => {
   const states = useProductionAccountStates(type, detail.id)
-
   return (
-    <View
-      style={[tailwind("flex-row"), { opacity: states.isLoading ? 0.6 : 1 }]}
-    >
+    <View style={[tailwind("flex-row")]}>
       <View>
         <FavoriteOrAddToWatchlistButton
           type="favorite"
@@ -300,16 +325,18 @@ const Runtime: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
 }
 
 const VideoSection: VFC<{
-  isLoading: boolean
   detail: ProductionDetailExtra & { id: number }
-}> = ({ detail: { videos }, isLoading }) =>
-  isLoading || !!videos?.results ? (
+  height: number
+  isLoading: boolean
+}> = ({ detail: { videos }, height, isLoading }) => {
+  return isLoading || !!(videos?.results?.length !== 0) ? (
     <View style={tailwind("flex-row")}>
+      <VideoTileHeightPlaceholder height={height} />
       <HorizontalFlatList
         data={videos?.results}
-        renderItem={({ item }) => <VideoTile video={item} />}
+        renderItem={({ item }) => <VideoTile video={item} height={height} />}
         keyExtractor={(item) => `${item.id}`}
       />
-      <VideoTileHeightSpacer />
     </View>
   ) : null
+}

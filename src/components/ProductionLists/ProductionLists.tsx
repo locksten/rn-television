@@ -1,5 +1,5 @@
-import { ProductionList } from "@components/ProductionList"
-import { OnProductionPress } from "@components/ProductionTile"
+import { HorizontalFlatList } from "@components/HorizontalFlatList"
+import { OnProductionPress, ProductionTile } from "@components/ProductionTile"
 import { SeparatedBy } from "@components/SeparatedBy"
 import {
   Production,
@@ -10,20 +10,12 @@ import React, { VFC } from "react"
 import { ScrollView, View } from "react-native"
 import tailwind from "tailwind-rn"
 
-export const TVProductionLists: VFC<{
+export const GlobalProductionLists: VFC<{
+  type: ProductionType
   onPress?: OnProductionPress
-}> = ({ onPress }) => (
+}> = ({ type, onPress }) => (
   <ProductionLists
-    lists={useGlobalProductionLists("tv")}
-    onPress={(_, id, production) => onPress?.(id, production)}
-  />
-)
-
-export const MovieProductionLists: VFC<{
-  onPress?: OnProductionPress
-}> = ({ onPress }) => (
-  <ProductionLists
-    lists={useGlobalProductionLists("movie")}
+    lists={useGlobalProductionLists(type)}
     onPress={(_, id, production) => onPress?.(id, production)}
   />
 )
@@ -44,11 +36,20 @@ export const ProductionLists: VFC<{
       <SeparatedBy separator={<View style={tailwind("h-8")} />} start end>
         {lists.map((list) => {
           return list ? (
-            <ProductionList
-              title={list.name}
-              productions={list.productions}
-              onPress={(id, production) => onPress?.(list.type, id, production)}
+            <HorizontalFlatList
               key={list.name}
+              title={list.name}
+              data={list.productions}
+              renderItem={({ item }) => (
+                <ProductionTile
+                  height={160}
+                  production={item}
+                  onPress={(id, production) =>
+                    onPress?.(list.type, id, production)
+                  }
+                />
+              )}
+              keyExtractor={(item) => `${item.id}`}
             />
           ) : null
         })}

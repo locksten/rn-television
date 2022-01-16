@@ -1,3 +1,5 @@
+import { tmdbImagePrefixUrl } from "@queries/tmdb"
+
 export type CastMember = Partial<{
   adult: boolean
   gender: number
@@ -51,3 +53,6 @@ export const combineSameCrewMembers = (crew: CrewMember[]) => {
     return acc
   }, [] as CrewMember[])
 }
+
+export const creditImageUrl = (path?: string) =>
+  path && tmdbImagePrefixUrl + "w185" + path
