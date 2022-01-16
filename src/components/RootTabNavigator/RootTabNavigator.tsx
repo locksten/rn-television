@@ -6,6 +6,7 @@ import {
 import { TVHomeScreen, TVHomeScreenParams } from "@components/TVHomeScreen"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useAccountDetail } from "@queries/account"
+import { useAuth } from "@queries/auth"
 import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
@@ -23,9 +24,11 @@ export type RootTabsNavigationProp = BottomTabNavigationProp<RootTabs>
 
 export const RootTabNavigator: VFC = () => {
   const Tab = createBottomTabNavigator<RootTabs>()
+  const { isLoggedIn } = useAuth()
   const { data: account } = useAccountDetail()
   return (
     <Tab.Navigator
+      initialRouteName={isLoggedIn ? "Account" : "Movie"}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ color, size }) => {
