@@ -55,7 +55,7 @@ const getStoredSession = async () => {
 const clearStoredSession = () => SecureStore.deleteItemAsync(sessionKey)
 
 type AuthContextType = {
-  isLoggedIn: boolean
+  isLoggedIn?: boolean
   logOut: () => void
   getSession: () => Session | undefined
   logIn: (session: Session) => Promise<void>
@@ -70,7 +70,7 @@ export const useAuth = () => {
 }
 
 export const useAuthProvider = () => {
-  const [isLoggedIn, setIsloggedIn] = useState(false)
+  const [isLoggedIn, setIsloggedIn] = useState<boolean | undefined>(undefined)
   const [cachedSession, setCachedSession] = useState<Session | undefined>(
     undefined,
   )

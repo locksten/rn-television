@@ -26,7 +26,7 @@ export const RootTabNavigator: VFC = () => {
   const Tab = createBottomTabNavigator<RootTabs>()
   const { isLoggedIn } = useAuth()
   const { data: account } = useAccountDetail()
-  return (
+  return isLoggedIn === undefined ? null : (
     <Tab.Navigator
       initialRouteName={isLoggedIn ? "Account" : "Movie"}
       screenOptions={({ route }) => ({
