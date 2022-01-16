@@ -1,3 +1,4 @@
+import { CreditsSection } from "@components/Credits"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
 import {
   ProductionTile,
@@ -41,7 +42,7 @@ const Seasons: VFC<{ isLoading: boolean; detail: TVDetailExtra }> = ({
   isLoading,
 }) => {
   const height = 160
-  return isLoading || !!(detail.seasons?.length !== 0) ? (
+  return isLoading || detail.seasons?.length ? (
     <View style={tailwind("flex-row")}>
       <ProductionTileHeightPlaceholder
         height={height}

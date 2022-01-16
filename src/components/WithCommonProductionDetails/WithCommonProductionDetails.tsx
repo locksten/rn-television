@@ -99,7 +99,7 @@ const Genres: VFC<{
   const genres = genre_ids
     ?.map((id) => allGenres?.find((g) => g.id === id)?.name)
     .filter((g) => g)
-  return genres && genres.length !== 0 ? <Text>{genres.join(", ")}</Text> : null
+  return genres && genres.length ? <Text>{genres.join(", ")}</Text> : null
 }
 
 const Recommendations: VFC<{
@@ -111,7 +111,7 @@ const Recommendations: VFC<{
   const navigation = useNavigation<CommonStackNavigationProp>()
   const recommendations = useProductionRecommendations(type, detail.id).data
     ?.results
-  return isLoading || !!(recommendations?.length !== 0) ? (
+  return isLoading || recommendations?.length ? (
     <View style={tailwind("flex-row")}>
       <ProductionTileHeightPlaceholder height={height} />
       <HorizontalFlatList
@@ -252,7 +252,7 @@ const ProductionCompanies: VFC<{
   detail: ProductionDetailExtra
 }> = ({ detail }) => {
   const { production_companies } = detail
-  return production_companies && production_companies.length !== 0 ? (
+  return production_companies && production_companies.length ? (
     <Text style={tailwind("flex-wrap")}>
       {production_companies?.map((company) => company.name).join(", ")}
     </Text>
@@ -329,7 +329,7 @@ const VideoSection: VFC<{
   height: number
   isLoading: boolean
 }> = ({ detail: { videos }, height, isLoading }) => {
-  return isLoading || !!(videos?.results?.length !== 0) ? (
+  return isLoading || videos?.results?.length ? (
     <View style={tailwind("flex-row")}>
       <VideoTileHeightPlaceholder height={height} />
       <HorizontalFlatList

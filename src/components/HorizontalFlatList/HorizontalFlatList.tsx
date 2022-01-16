@@ -8,7 +8,7 @@ export const HorizontalFlatList: <T>(
     title?: string | (() => JSX.Element)
   },
 ) => React.ReactElement | null = ({ title, ...props }) =>
-  props.data && props.data.length !== 0 ? (
+  props.data && props.data.length ? (
     <View style={tailwind("flex-1")}>
       {typeof title === "string" ? <SectionTitle title={title} /> : title?.()}
       <FlatList
