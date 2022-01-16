@@ -310,7 +310,7 @@ const Ratings: VFC<{
       myPercentage={myPercentage}
       productionType={productionType}
       id={id}
-      size={75}
+      size={70}
     />
   )
 }

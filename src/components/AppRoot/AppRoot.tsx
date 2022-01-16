@@ -1,4 +1,5 @@
 import { RootTabNavigator } from "@components/RootTabNavigator"
+import { navigationTheme } from "@components/theme"
 import { useAuthProvider } from "@queries/auth"
 import { GenreProvider } from "@queries/genre"
 import { AppQueryClientProvider } from "@queries/queryClient"
@@ -11,7 +12,7 @@ export const AppRoot: VFC = () => {
   return (
     <AppQueryClientProvider>
       <SafeAreaProvider>
-        <NavigationContainer>
+        <NavigationContainer theme={navigationTheme}>
           <StatusBar style="auto" />
           <RootNavigator />
         </NavigationContainer>

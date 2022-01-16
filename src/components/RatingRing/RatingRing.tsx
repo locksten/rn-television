@@ -1,5 +1,6 @@
 import { Ring } from "@components/Ring"
 import { RootTabsNavigationProp } from "@components/RootTabNavigator"
+import { colors } from "@components/theme"
 import {
   fetchRateProduction,
   processRatingForApi,
@@ -12,7 +13,6 @@ import React, { FC, useState, VFC } from "react"
 import { Text, TextInput, View } from "react-native"
 import * as Svg from "react-native-svg"
 import { useMutation, useQueryClient } from "react-query"
-import { colors } from "src/theme"
 import tailwind from "tailwind-rn"
 
 export const RatingRing: VFC<{
@@ -51,7 +51,7 @@ export const RatingRing: VFC<{
       }) => !staticSize && setSize(Math.min(width, height))}
     >
       {!!size && (
-        <View style={{ height: size, width: size }}>
+        <View style={[{ height: size, width: size }, tailwind("flex-1")]}>
           <Rings
             percentage={percentage}
             myPercentage={
@@ -208,12 +208,11 @@ const RingText: VFC<{
     >
       <Text
         style={[
-          tailwind(
-            `font-bold ${displayMyValue ? "text-red-600" : "text-black"}`,
-          ),
+          tailwind(`font-bold`),
           {
             fontSize: 300,
             includeFontPadding: false,
+            color: displayMyValue ? colors.primary : "black",
           },
         ]}
         adjustsFontSizeToFit
@@ -229,7 +228,7 @@ const Rings: VFC<{
   myPercentage?: number
 }> = ({ percentage, myPercentage }) => {
   const size = 100
-  const strokeWidth = size / 7
+  const strokeWidth = size / 8
   const radius = size / 2
   const base = {
     strokeWidth,
@@ -244,7 +243,7 @@ const Rings: VFC<{
         <Ring
           {...base}
           percentage={myPercentage}
-          color="#DC2626"
+          color={colors.primary.toUpperCase()}
           radius={radius - strokeWidth - strokeWidth / 4 + 0.5}
           strokeWidth={strokeWidth / 2}
         />
@@ -257,7 +256,7 @@ export const AbsoluteCenter: FC<{ size?: number }> = ({ size, children }) => (
   <View
     style={[
       { width: size, height: size },
-      tailwind("absolute justify-center items-center"),
+      tailwind("absolute h-full justify-center items-center"),
     ]}
   >
     {children}

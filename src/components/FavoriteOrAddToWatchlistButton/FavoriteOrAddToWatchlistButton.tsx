@@ -1,4 +1,5 @@
 import { RootTabsNavigationProp } from "@components/RootTabNavigator"
+import { colors } from "@components/theme"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import {
   fetchSetProductionAccountState,
@@ -62,7 +63,7 @@ export const FavoriteOrAddToWatchlistButton: VFC<{
     >
       <Ionicons
         name={type === "favorite" ? "heart" : "bookmark"}
-        color={isLoading ? "gray" : currentState ? "#dc2626" : "black"}
+        color={isLoading ? "gray" : currentState ? colors.primary : "black"}
         size={36}
       />
     </Pressable>
