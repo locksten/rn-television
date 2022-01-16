@@ -62,7 +62,7 @@ export const VideoTileHeightPlaceholder: VFC<{ height?: number }> = ({
       video={{
         site: "YouTube",
         key: " ",
-        name: "\n",
+        name: " ",
         published_at: "1970-01-01",
       }}
     />
