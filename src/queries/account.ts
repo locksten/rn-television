@@ -4,7 +4,7 @@ import { sessionParam, tmdb } from "@queries/tmdb"
 import { useQueries, useQuery } from "react-query"
 
 export type AccountDetail = Partial<{
-  avatar: { gravatar: { hash: string } }
+  avatar: { gravatar?: { hash?: string } }
   id: number
   iso_639_1: string
   iso_3166_1: string

@@ -54,10 +54,10 @@ export type MovieDetail = Partial<{
   backdrop_path: string
   belongs_to_collection: object
   budget: number
-  genres: {
+  genres: Partial<{
     id: number
     name: string
-  }[]
+  }>[]
   homepage: string
   id: number
   imdb_id: string
@@ -66,23 +66,23 @@ export type MovieDetail = Partial<{
   overview: string
   popularity: number
   poster_path: string
-  production_companies: {
+  production_companies: Partial<{
     name: string
     id: number
     logo_path: string
     origin_country: string
-  }[]
-  production_countries: {
+  }>[]
+  production_countries: Partial<{
     iso_3166_1: string
     name: string
-  }[]
+  }>[]
   release_date: string
   revenue: number
   runtime: number
-  spoken_languages: {
+  spoken_languages: Partial<{
     iso_639_1: string
     name: string
-  }[]
+  }>[]
   status:
     | "Rumored"
     | "Planned"

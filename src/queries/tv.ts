@@ -32,25 +32,25 @@ export type TVListType = typeof tvListTypes[number]
 
 export type TVDetail = Partial<{
   backdrop_path: string
-  created_by: {
+  created_by: Partial<{
     id: number
     credit_id: string
     name: string
     gender: number
     profile_path: string
-  }[]
+  }>[]
   episode_run_time: number[]
   first_air_date: string
-  genres: {
+  genres: Partial<{
     id: number
     name: string
-  }[]
+  }>[]
   homepage: string
   id: number
   in_production: boolean
   languages: string[]
   last_air_date: string
-  last_episode_to_air: {
+  last_episode_to_air: Partial<{
     air_date: string
     episode_number: number
     id: number
@@ -61,15 +61,15 @@ export type TVDetail = Partial<{
     still_path: string
     vote_average: number
     vote_count: number
-  }
+  }>
   name: string
   next_episode_to_air: null
-  networks: {
+  networks: Partial<{
     name: string
     id: number
     logo_path: string
     origin_country: string
-  }[]
+  }>[]
   number_of_episodes: number
   number_of_seasons: number
   origin_country: string[]
@@ -78,17 +78,17 @@ export type TVDetail = Partial<{
   overview: string
   popularity: number
   poster_path: string
-  production_companies: {
+  production_companies: Partial<{
     id: number
     logo_path: string
     name: string
     origin_country: string
-  }[]
-  production_countries: {
+  }>[]
+  production_countries: Partial<{
     iso_3166_1: string
     name: string
-  }[]
-  seasons: {
+  }>[]
+  seasons: Partial<{
     air_date: string
     episode_count: number
     id: number
@@ -96,12 +96,12 @@ export type TVDetail = Partial<{
     overview: string
     poster_path: string
     season_number: number
-  }[]
-  spoken_languages: {
+  }>[]
+  spoken_languages: Partial<{
     english_name: string
     iso_639_1: string
     name: string
-  }[]
+  }>[]
   status: string
   tagline: string
   type: string
