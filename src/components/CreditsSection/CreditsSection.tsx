@@ -18,14 +18,14 @@ export const CreditsSection: VFC<{
   cast?: CastMember[]
   crew?: CrewMember[]
   guestStars?: GuestStar[]
-  isLoading: boolean
+  isLoading?: boolean
   height?: number
   style?: StyleProp<ViewStyle>
 }> = ({
   cast,
   crew,
   guestStars,
-  isLoading,
+  isLoading = false,
   height = sectionImageHeight,
   style,
 }) => {

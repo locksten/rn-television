@@ -9,9 +9,9 @@ import tailwind from "tailwind-rn"
 export const VideoSection: VFC<{
   videos?: Video[]
   height?: number
-  isLoading: boolean
+  isLoading?: boolean
   style?: StyleProp<ViewStyle>
-}> = ({ videos, height = sectionImageHeight, isLoading, style }) =>
+}> = ({ videos, height = sectionImageHeight, isLoading = false, style }) =>
   isLoading || videos?.length ? (
     <View style={[tailwind("flex-row"), style]}>
       <VideoTileHeightPlaceholder height={height} />

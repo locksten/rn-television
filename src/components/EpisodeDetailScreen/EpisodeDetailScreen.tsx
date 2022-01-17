@@ -4,7 +4,7 @@ import { OverviewSection } from "@components/OverviewSection"
 import { detailSpacing, horizontalPadding } from "@components/theme"
 import { VideoSection } from "@components/VideoSection"
 import { CommonStackParams } from "@components/WithCommonStackScreens"
-import { EpisodeDetailExtra, useEpisodeDetailExtra } from "@queries/episode"
+import { useEpisodeDetailExtra } from "@queries/episode"
 import { stillImageUrl } from "@queries/image"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { VFC } from "react"
@@ -17,18 +17,12 @@ export const EpisodeDetailScreen: VFC<
     params: { tvId, seasonNumber, episodeNumber, episode },
   },
 }) => {
-  const { data, isLoading } = useEpisodeDetailExtra(
-    tvId,
-    seasonNumber,
-    episodeNumber,
-  )
-  const detail: EpisodeDetailExtra | undefined = { ...episode, ...data }
-  const { overview, videos, credits, still_path } = detail
-
-  const crew = episode?.crew ?? credits?.crew
-  const cast = credits?.cast
-  const guestStars = episode?.guest_stars ?? credits?.guest_stars
-
+  const { data } = useEpisodeDetailExtra(tvId, seasonNumber, episodeNumber)
+  const detail = { ...episode, ...data }
+  const { overview, videos, still_path, cast, crew, guest_stars } = {
+    ...detail,
+    ...detail.credits,
+  }
   return (
     <ScrollView>
       <View style={horizontalPadding}>
@@ -42,16 +36,11 @@ export const EpisodeDetailScreen: VFC<
         )}
         <OverviewSection overview={overview} style={detailSpacing} />
       </View>
-      <VideoSection
-        videos={videos?.results}
-        isLoading={isLoading}
-        style={detailSpacing}
-      />
+      <VideoSection videos={videos?.results} style={detailSpacing} />
       <CreditsSection
         cast={cast}
         crew={crew}
-        guestStars={guestStars}
-        isLoading={isLoading}
+        guestStars={guest_stars}
         style={detailSpacing}
       />
       <View style={detailSpacing} />
