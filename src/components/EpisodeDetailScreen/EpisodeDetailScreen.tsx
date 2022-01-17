@@ -1,5 +1,6 @@
 import { AppImage } from "@components/AppImage"
 import { CreditsSection } from "@components/CreditsSection"
+import { NoDetailsIndicator } from "@components/NoDetailsIndicator"
 import { OverviewSection } from "@components/OverviewSection"
 import { detailSpacing, horizontalPadding } from "@components/theme"
 import { VideoSection } from "@components/VideoSection"
@@ -17,13 +18,28 @@ export const EpisodeDetailScreen: VFC<
     params: { tvId, seasonNumber, episodeNumber, episode },
   },
 }) => {
-  const { data } = useEpisodeDetailExtra(tvId, seasonNumber, episodeNumber)
+  const { data, isLoading } = useEpisodeDetailExtra(
+    tvId,
+    seasonNumber,
+    episodeNumber,
+  )
   const detail = { ...episode, ...data }
   const { overview, videos, still_path, cast, crew, guest_stars } = {
     ...detail,
     ...detail.credits,
   }
-  return (
+  const noDetails = !(
+    isLoading ||
+    still_path ||
+    overview ||
+    videos?.results?.length ||
+    cast?.length ||
+    crew?.length ||
+    guest_stars?.length
+  )
+  return noDetails ? (
+    <NoDetailsIndicator />
+  ) : (
     <ScrollView>
       <View style={horizontalPadding}>
         {!!still_path && (

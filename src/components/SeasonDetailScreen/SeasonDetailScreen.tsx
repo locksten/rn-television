@@ -4,6 +4,7 @@ import {
   EpisodeTileHeightPlaceholder,
 } from "@components/EpisodeTile"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
+import { NoDetailsIndicator } from "@components/NoDetailsIndicator"
 import { OverviewSection } from "@components/OverviewSection"
 import { PosterTile } from "@components/PosterTile"
 import {
@@ -38,7 +39,18 @@ export const SeasonDetailScreen: VFC<
   const { data, isLoading } = useSeasonDetailExtra(tvId, seasonNumber)
   const detail: SeasonDetailExtra | undefined = { ...season, ...data }
   const { poster_path, overview, videos, credits, episodes } = detail
-  return (
+  const noDetails = !(
+    isLoading ||
+    poster_path ||
+    overview ||
+    videos?.results?.length ||
+    credits?.cast?.length ||
+    credits?.crew?.length ||
+    episodes?.length
+  )
+  return noDetails ? (
+    <NoDetailsIndicator />
+  ) : (
     <ScrollView>
       {!!poster_path && (
         <PosterTile
