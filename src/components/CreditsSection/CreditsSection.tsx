@@ -35,7 +35,7 @@ export const CreditsSection: VFC<{
       sections={{
         ...(isLoading || guestStars?.length
           ? {
-              Cast: () => (
+              ["Guest Stars"]: () => (
                 <CreditList
                   type={"guestStar"}
                   height={height}
