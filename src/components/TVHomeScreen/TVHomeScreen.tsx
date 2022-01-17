@@ -33,7 +33,7 @@ const HomeScreen: VFC<NativeStackScreenProps<TVHomeScreenParams, "Home">> = ({
 }) => (
   <GlobalProductionLists
     type="tv"
-    onPress={(id, production) => {
+    onPress={(_, id, production) => {
       navigation.push("TVDetail", {
         id,
         production,

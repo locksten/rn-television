@@ -2,7 +2,7 @@ import React, { FC, useState } from "react"
 import { Text, TouchableWithoutFeedback } from "react-native"
 
 export const TapToExpandText: FC<{
-  collapsedLines: number
+  collapsedLines?: number
   expandedLines?: number
 }> = ({ collapsedLines, expandedLines, children }) => {
   const [isExpanded, setIsExpanded] = useState(false)

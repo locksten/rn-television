@@ -1,11 +1,12 @@
 import { SectionTitle, sectionTitleStyles } from "@components/SectionTitle"
 import React, { useEffect, useState, VFC } from "react"
-import { TouchableOpacity, View } from "react-native"
+import { StyleProp, TouchableOpacity, View, ViewStyle } from "react-native"
 import tailwind from "tailwind-rn"
 
 export const Sections: VFC<{
   sections: { [title: string]: () => JSX.Element }
-}> = ({ sections }) => {
+  style?: StyleProp<ViewStyle>
+}> = ({ sections, style }) => {
   const [activeTitle, setActiveTitle] = useState<string | undefined>()
   useEffect(() => {
     setActiveTitle(Object.keys(sections)[0])
@@ -20,7 +21,7 @@ export const Sections: VFC<{
   const opacity = 0.4
 
   return (
-    <View>
+    <View style={style}>
       <View style={tailwind("flex-row")}>
         {Object.keys(sections).map((title, idx) => {
           return (

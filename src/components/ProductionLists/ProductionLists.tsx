@@ -1,6 +1,7 @@
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
-import { OnProductionPress, ProductionTile } from "@components/ProductionTile"
+import { PosterTile } from "@components/PosterTile"
 import { SeparatedBy } from "@components/SeparatedBy"
+import { productionImageHeight } from "@components/theme"
 import {
   Production,
   ProductionType,
@@ -12,12 +13,9 @@ import tailwind from "tailwind-rn"
 
 export const GlobalProductionLists: VFC<{
   type: ProductionType
-  onPress?: OnProductionPress
+  onPress: (type: ProductionType, id: number, production?: Production) => void
 }> = ({ type, onPress }) => (
-  <ProductionLists
-    lists={useGlobalProductionLists(type)}
-    onPress={(_, id, production) => onPress?.(id, production)}
-  />
+  <ProductionLists lists={useGlobalProductionLists(type)} onPress={onPress} />
 )
 
 export const ProductionLists: VFC<{
@@ -40,15 +38,20 @@ export const ProductionLists: VFC<{
               key={list.name}
               title={list.name}
               data={list.productions}
-              renderItem={({ item }) => (
-                <ProductionTile
-                  height={160}
-                  production={item}
-                  onPress={(id, production) =>
-                    onPress?.(list.type, id, production)
-                  }
-                />
-              )}
+              renderItem={({ item }) => {
+                const productionId = item.id
+                return (
+                  <PosterTile
+                    height={productionImageHeight}
+                    uri={item.poster_path}
+                    onPress={
+                      productionId
+                        ? () => onPress?.(list.type, productionId, item)
+                        : undefined
+                    }
+                  />
+                )
+              }}
               keyExtractor={(item) => `${item.id}`}
             />
           ) : null

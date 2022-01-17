@@ -1,6 +1,6 @@
 import { WithCommonProductionDetails } from "@components/WithCommonProductionDetails"
 import { CommonStackParams } from "@components/WithCommonStackScreens"
-import { MovieDetailExtra, useMovieDetailExtra } from "@queries/movie"
+import { useProductionDetailExtra, MovieDetailExtra } from "@queries/production"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { VFC } from "react"
 
@@ -11,8 +11,8 @@ export const MovieDetailScreen: VFC<
     params: { id, production },
   },
 }) => {
-  const { data, isLoading } = useMovieDetailExtra(id)
-  const detail: MovieDetailExtra & { id: number } = {
+  const { data, isLoading } = useProductionDetailExtra("movie", id)
+  const detail: (MovieDetailExtra | undefined) & { id: number } = {
     ...{ id },
     ...production,
     ...{ release_date: undefined },

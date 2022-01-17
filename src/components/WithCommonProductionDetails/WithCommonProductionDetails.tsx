@@ -1,29 +1,33 @@
-import { CreditsSection } from "@components/Credits"
+import { CreditsSection } from "@components/CreditsSection"
 import { FavoriteOrAddToWatchlistButton } from "@components/FavoriteOrAddToWatchlistButton"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
-import {
-  ProductionTile,
-  ProductionTileHeightPlaceholder,
-} from "@components/ProductionTile"
+import { OverviewSection } from "@components/OverviewSection"
+import { PosterTile, PosterTileHeightPlaceholder } from "@components/PosterTile"
 import { RatingRing } from "@components/RatingRing"
-import { SeparatedBy } from "@components/SeparatedBy"
 import { TapToExpandText } from "@components/TapToExpandText"
-import { VideoTile, VideoTileHeightPlaceholder } from "@components/VideoTile"
+import {
+  detailPosterHeight,
+  detailSpacing,
+  productionImageHeight,
+} from "@components/theme"
+import { VideoSection } from "@components/VideoSection"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
 import { ProductionAccountStates } from "@queries/account"
 import { useProductionGenres } from "@queries/genre"
-import { Movie, MovieDetail, MovieDetailExtra } from "@queries/movie"
+import { Movie, MovieDetail } from "@queries/movie"
 import {
+  MovieDetailExtra,
   Production,
   ProductionDetailExtra,
   ProductionType,
+  TVDetailExtra,
   useProductionAccountStates,
   useProductionRecommendations,
 } from "@queries/production"
-import { TV, TVDetail, TVDetailExtra } from "@queries/tv"
+import { TV, TVDetail } from "@queries/tv"
 import { useNavigation } from "@react-navigation/native"
 import React, { ComponentType, FC, VFC } from "react"
-import { ScrollView, Text, View } from "react-native"
+import { ScrollView, StyleProp, Text, View, ViewStyle } from "react-native"
 import { shortDate, withNonBreakingSpaces } from "src/utils"
 import tailwind from "tailwind-rn"
 
@@ -31,41 +35,47 @@ export const WithCommonProductionDetails: FC<{
   MiddleSlot?: ComponentType
   type: ProductionType
   isLoading: boolean
-  detail: Production & (ProductionDetailExtra & { id: number })
-}> = ({ MiddleSlot, type, detail, isLoading, children }) => {
-  const Separator = <View style={tailwind("h-4")} />
-  return (
-    <ScrollView>
-      <SeparatedBy separator={Separator} start end>
-        <MainSection type={type} detail={detail} />
-        <VideoSection detail={detail} isLoading={isLoading} height={120} />
-        {!!MiddleSlot && <MiddleSlot />}
-        <CreditsSection detail={detail} isLoading={isLoading} height={120} />
-        <Recommendations
-          type={type}
-          detail={detail}
-          height={160}
-          isLoading={isLoading}
-        />
-        {children}
-      </SeparatedBy>
-    </ScrollView>
-  )
-}
+  detail: Production & ProductionDetailExtra & { id: number }
+}> = ({ MiddleSlot, type, detail, isLoading, children }) => (
+  <ScrollView>
+    <MainSection type={type} detail={detail} style={detailSpacing} />
+    <VideoSection
+      videos={detail?.videos?.results}
+      isLoading={isLoading}
+      style={detailSpacing}
+    />
+    {!!MiddleSlot && <MiddleSlot />}
+    <CreditsSection
+      cast={detail.credits?.cast}
+      crew={detail.credits?.crew}
+      isLoading={isLoading}
+      style={detailSpacing}
+    />
+    <Recommendations
+      type={type}
+      detail={detail}
+      isLoading={isLoading}
+      style={detailSpacing}
+    />
+    {children}
+    <View style={detailSpacing} />
+  </ScrollView>
+)
 
 const MainSection: VFC<{
   type: ProductionType
   detail: ProductionDetailExtra & { id: number }
-}> = ({ type, detail }) => {
+  style?: StyleProp<ViewStyle>
+}> = ({ type, detail, style }) => {
   return (
-    <View style={tailwind("px-4")}>
+    <View style={[tailwind("px-4"), style]}>
       <PosterSection type={type} detail={detail} />
       <View style={tailwind("h-1")} />
       <TitleAndTagline detail={detail} />
       <View style={tailwind("h-2")} />
       <Genres detail={detail} type={type} />
       <View style={tailwind("h-2")} />
-      <Overview detail={detail} />
+      <OverviewSection overview={detail.overview} collapsedLines={4} />
     </View>
   )
 }
@@ -106,48 +116,38 @@ const Recommendations: VFC<{
   type: ProductionType
   isLoading: boolean
   detail: ProductionDetailExtra & { id: number }
-  height: number
-}> = ({ type, isLoading, detail, height }) => {
+  height?: number
+  style?: StyleProp<ViewStyle>
+}> = ({ type, isLoading, detail, height = productionImageHeight, style }) => {
   const navigation = useNavigation<CommonStackNavigationProp>()
   const recommendations = useProductionRecommendations(type, detail.id).data
     ?.results
   return isLoading || recommendations?.length ? (
-    <View style={tailwind("flex-row")}>
-      <ProductionTileHeightPlaceholder height={height} />
+    <View style={[tailwind("flex-row"), style]}>
+      <PosterTileHeightPlaceholder height={height} />
       <HorizontalFlatList
         title="Recommendations"
         data={recommendations}
-        renderItem={({ item }) => (
-          <ProductionTile
-            height={height}
-            production={item}
-            onPress={(id, production) =>
-              navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
-                id,
-                production,
-              })
-            }
-          />
-        )}
+        renderItem={({ item }) => {
+          const productionId = item.id
+          return productionId ? (
+            <PosterTile
+              height={height}
+              uri={item.poster_path}
+              onPress={() =>
+                navigation.push(type === "tv" ? "TVDetail" : "MovieDetail", {
+                  id: productionId,
+                  production: item,
+                })
+              }
+            />
+          ) : null
+        }}
         keyExtractor={(item) => `${item.id}`}
       />
     </View>
   ) : null
 }
-
-const Overview: VFC<{ detail: ProductionDetailExtra }> = ({
-  detail: { overview },
-}) =>
-  overview ? (
-    <View style={tailwind("flex-row")}>
-      <View style={tailwind("w-0")}>
-        <Text>{"\n\n\n"}</Text>
-      </View>
-      <TapToExpandText collapsedLines={4}>
-        <Text>{overview}</Text>
-      </TapToExpandText>
-    </View>
-  ) : null
 
 const HomePageLink: VFC<{ detail: ProductionDetailExtra }> = ({
   detail: { homepage },
@@ -188,7 +188,11 @@ const PosterSection: VFC<{
   return (
     <View style={tailwind("flex-row")}>
       <View style={[tailwind("flex-row")]}>
-        <ProductionTile key={detail.id} production={detail} height={245} />
+        <PosterTile
+          key={detail.id}
+          uri={detail.poster_path}
+          height={detailPosterHeight}
+        />
       </View>
       <View style={tailwind("flex-1 pl-2")}>
         <ButtonSection type={type} detail={detail} />
@@ -321,22 +325,5 @@ const Runtime: VFC<{ detail: ProductionDetailExtra }> = ({ detail }) => {
     <Text>
       {runtime} Runtime{"\n"}
     </Text>
-  ) : null
-}
-
-const VideoSection: VFC<{
-  detail: ProductionDetailExtra & { id: number }
-  height: number
-  isLoading: boolean
-}> = ({ detail: { videos }, height, isLoading }) => {
-  return isLoading || videos?.results?.length ? (
-    <View style={tailwind("flex-row")}>
-      <VideoTileHeightPlaceholder height={height} />
-      <HorizontalFlatList
-        data={videos?.results}
-        renderItem={({ item }) => <VideoTile video={item} height={height} />}
-        keyExtractor={(item) => `${item.id}`}
-      />
-    </View>
   ) : null
 }

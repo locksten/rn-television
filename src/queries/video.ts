@@ -1,5 +1,3 @@
-import { shortDate } from "src/utils"
-
 export type Video = Partial<{
   iso_639_1: string
   iso_3166_1: string
@@ -17,7 +15,3 @@ export type Videos = Partial<{
   id: number
   results: Video[]
 }>
-
-export const videoToShortDate = (video?: Video) => {
-  return video?.published_at && shortDate(video.published_at)
-}

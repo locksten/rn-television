@@ -1,11 +1,10 @@
 import { CommonStackParams } from "@components/WithCommonStackScreens"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import React, { VFC } from "react"
-import { Text, View } from "react-native"
+import { Dimensions, Text, View } from "react-native"
 import YoutubePlayer from "react-native-youtube-iframe"
+import { fullDate } from "src/utils"
 import tailwind from "tailwind-rn"
-import { Dimensions } from "react-native"
-import { videoToShortDate } from "@queries/video"
 
 export const YouTubeScreen: VFC<
   NativeStackScreenProps<CommonStackParams, "YouTube">
@@ -29,7 +28,9 @@ export const YouTubeScreen: VFC<
       <Text numberOfLines={6} style={tailwind("font-bold text-xl")}>
         {video.name}
       </Text>
-      <Text style={tailwind("text-lg")}>{videoToShortDate(video)}</Text>
+      <Text style={tailwind("text-lg")}>
+        {video.published_at ? fullDate(video.published_at) : undefined}
+      </Text>
     </View>
   </View>
 )

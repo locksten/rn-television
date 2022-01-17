@@ -1,10 +1,11 @@
 import { AppImage } from "@components/AppImage"
 import { CommonStackNavigationProp } from "@components/WithCommonStackScreens"
-import { Video, videoToShortDate } from "@queries/video"
+import { Video } from "@queries/video"
 import { useNavigation } from "@react-navigation/native"
 import React, { useEffect, useState, VFC } from "react"
 import { Text, View } from "react-native"
 import { getYoutubeMeta, YoutubeMeta } from "react-native-youtube-iframe"
+import { shortDate } from "src/utils"
 import tailwind from "tailwind-rn"
 
 export const VideoTile: VFC<{
@@ -46,7 +47,9 @@ const YouTubeVideoTile: VFC<{
       renderEnd={() => (
         <View style={tailwind("pt-1")}>
           <Text numberOfLines={1}>{name}</Text>
-          <Text style={tailwind("font-light")}>{videoToShortDate(video)}</Text>
+          <Text style={tailwind("font-light")}>
+            {video?.published_at ? shortDate(video.published_at) : undefined}
+          </Text>
         </View>
       )}
     />

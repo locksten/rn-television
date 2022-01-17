@@ -1,22 +1,49 @@
 import { CreditTile, CreditTileHeightPlaceholder } from "@components/CreditTile"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
 import { Sections } from "@components/Sections"
-import { combineSameCrewMembers, Credit, CreditType } from "@queries/credit"
-import { ProductionDetailExtra } from "@queries/production"
+import { sectionImageHeight } from "@components/theme"
+import {
+  CastMember,
+  combineSameCrewMembers,
+  Credit,
+  CreditType,
+  CrewMember,
+  GuestStar,
+} from "@queries/credit"
 import React, { VFC } from "react"
-import { View } from "react-native"
+import { StyleProp, View, ViewStyle } from "react-native"
 import tailwind from "tailwind-rn"
 
 export const CreditsSection: VFC<{
-  detail: ProductionDetailExtra
+  cast?: CastMember[]
+  crew?: CrewMember[]
+  guestStars?: GuestStar[]
   isLoading: boolean
-  height: number
-}> = ({ detail, isLoading, height }) => {
-  const cast = detail.credits?.cast
-  const crew = detail.credits?.crew
+  height?: number
+  style?: StyleProp<ViewStyle>
+}> = ({
+  cast,
+  crew,
+  guestStars,
+  isLoading,
+  height = sectionImageHeight,
+  style,
+}) => {
   return (
     <Sections
+      style={style}
       sections={{
+        ...(isLoading || guestStars?.length
+          ? {
+              Cast: () => (
+                <CreditList
+                  type={"guestStar"}
+                  height={height}
+                  credits={guestStars}
+                />
+              ),
+            }
+          : undefined),
         ...(isLoading || cast?.length
           ? {
               Cast: () => (

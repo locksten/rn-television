@@ -11,6 +11,7 @@ export const Ring: VFC<{
   return (
     <Svg.Circle
       stroke={color}
+      strokeLinecap={"round"}
       cx={center}
       cy={center}
       r={radius}

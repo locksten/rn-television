@@ -1,5 +1,11 @@
 import React, { useState, VFC } from "react"
-import { Image, TouchableOpacity, View } from "react-native"
+import {
+  Image,
+  StyleProp,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native"
 import tailwind from "tailwind-rn"
 
 export const AppImage: VFC<
@@ -11,6 +17,7 @@ export const AppImage: VFC<
     renderEnd?: () => JSX.Element
     onPress?: () => void
     borderRadius?: number
+    style?: StyleProp<ViewStyle>
   } & (
     | { vertical?: false; horizontal?: false }
     | { vertical: true; horizontal?: false }
@@ -24,6 +31,7 @@ export const AppImage: VFC<
   renderEnd,
   onPress,
   borderRadius = 8,
+  style,
   ...props
 }) => {
   const horizontal = !!props.horizontal
@@ -41,7 +49,7 @@ export const AppImage: VFC<
     ) : null
 
   return (
-    <View style={tailwind(`flex-${horizontal ? "row" : "col"}`)}>
+    <View style={[tailwind(`flex-${horizontal ? "row" : "col"}`), style]}>
       <Slot element={renderStart} />
       <TouchableOpacity
         disabled={!onPress}

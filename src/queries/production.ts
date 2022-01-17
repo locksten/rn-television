@@ -1,22 +1,16 @@
 import { ProductionAccountStates } from "@queries/account"
 import { Session, useAuth } from "@queries/auth"
+import { Credits } from "@queries/credit"
 import {
   Movie,
   MovieDetail,
-  MovieDetailExtra,
   MovieList,
   MovieListType,
   movieListTypes,
 } from "@queries/movie"
 import { sessionParam, tmdb } from "@queries/tmdb"
-import {
-  TV,
-  TVDetail,
-  TVDetailExtra,
-  TVList,
-  TVListType,
-  tvListTypes,
-} from "@queries/tv"
+import { TV, TVDetail, TVList, TVListType, tvListTypes } from "@queries/tv"
+import { Videos } from "@queries/video"
 import { useQueries, useQuery } from "react-query"
 
 export type Production = Movie | TV
@@ -31,13 +25,13 @@ export type ProductionDetailExtra = MovieDetailExtra | TVDetailExtra
 
 export type ProductionListType = MovieListType | TVListType
 
-const fetchProductionList = (
-  productionType: ProductionType,
+const fetchProductionList = <T extends ProductionType>(
+  productionType: T,
   listType: ProductionListType,
 ) =>
   tmdb
     .get(`${productionType}/${listType}`)
-    .json<ProductionType extends "movie" ? MovieList : TVList>()
+    .json<T extends "movie" ? MovieList : TVList>()
 
 const globalProductionListsQueryFn = async (
   type: ProductionType,
@@ -76,7 +70,7 @@ export const productionListTypeToTitle = (type: ProductionListType) => {
   }
 }
 
-const fetchProductionAccountStates = async (
+const fetchProductionAccountStates = (
   type: ProductionType,
   id: number,
   { token }: Session,
@@ -98,16 +92,14 @@ export const useProductionAccountStates = (
   )
 }
 
-const fetchProductionSimilar = async (type: ProductionType, id: number) =>
+const fetchProductionSimilar = (type: ProductionType, id: number) =>
   tmdb.get(`${type}/${id}/similar`).json<ProductionList>()
 
 export const useProductionSimilar = (type: ProductionType, id: number) =>
   useQuery([type, id, "similar"], () => fetchProductionSimilar(type, id))
 
-const fetchProductionRecommendations = async (
-  type: ProductionType,
-  id: number,
-) => tmdb.get(`${type}/${id}/recommendations`).json<ProductionList>()
+const fetchProductionRecommendations = (type: ProductionType, id: number) =>
+  tmdb.get(`${type}/${id}/recommendations`).json<ProductionList>()
 
 export const useProductionRecommendations = (
   type: ProductionType,
@@ -115,4 +107,28 @@ export const useProductionRecommendations = (
 ) =>
   useQuery([type, id, "recommendation"], () =>
     fetchProductionRecommendations(type, id),
+  )
+
+export type MovieDetailExtra = MovieDetail & { credits?: Credits } & {
+  videos?: Videos
+}
+
+export type TVDetailExtra = TVDetail & { credits?: Credits } & {
+  videos?: Videos
+}
+
+const fetchProductionDetailExtra = <T extends ProductionType>(
+  type: T,
+  id: number,
+) =>
+  tmdb
+    .get(`${type}/${id}`, { searchParams: "append_to_response=credits,videos" })
+    .json<T extends "movie" ? MovieDetailExtra : TVDetailExtra>()
+
+export const useProductionDetailExtra = <T extends ProductionType>(
+  type: T,
+  id: number,
+) =>
+  useQuery([type, id, "detail", "extra"], () =>
+    fetchProductionDetailExtra(type, id),
   )

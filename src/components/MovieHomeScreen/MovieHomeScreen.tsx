@@ -35,7 +35,7 @@ const HomeScreen: VFC<
 > = ({ navigation }) => (
   <GlobalProductionLists
     type="movie"
-    onPress={(id, production) => {
+    onPress={(_, id, production) => {
       navigation.push("MovieDetail", {
         id,
         production,

@@ -1,7 +1,5 @@
-import { Credits } from "@queries/credit"
-import { ApiList, tmdb } from "@queries/tmdb"
-import { Videos } from "@queries/video"
-import { useQuery } from "react-query"
+import { Season } from "@queries/season"
+import { ApiList } from "@queries/tmdb"
 
 export type TV = Partial<{
   poster_path: string
@@ -88,15 +86,7 @@ export type TVDetail = Partial<{
     iso_3166_1: string
     name: string
   }>[]
-  seasons: Partial<{
-    air_date: string
-    episode_count: number
-    id: number
-    name: string
-    overview: string
-    poster_path: string
-    season_number: number
-  }>[]
+  seasons: Season[]
   spoken_languages: Partial<{
     english_name: string
     iso_639_1: string
@@ -108,20 +98,3 @@ export type TVDetail = Partial<{
   vote_average: number
   vote_count: number
 }>
-
-const fetchTVDetail = (id: number) => tmdb.get(`tv/${id}`).json<TVDetail>()
-
-export const useTVDetail = (id: number) =>
-  useQuery(["tv", id, "detail"], () => fetchTVDetail(id))
-
-export type TVDetailExtra = TVDetail & { credits?: Credits } & {
-  videos?: Videos
-}
-
-const fetchTVDetailExtra = async (id: number) =>
-  tmdb
-    .get(`tv/${id}`, { searchParams: "append_to_response=credits,videos" })
-    .json<TVDetailExtra>()
-
-export const useTVDetailExtra = (id: number) =>
-  useQuery(["tv", id, "detail", "extra"], () => fetchTVDetailExtra(id))

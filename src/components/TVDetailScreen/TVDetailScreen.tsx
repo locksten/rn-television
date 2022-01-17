@@ -1,15 +1,15 @@
-import { CreditsSection } from "@components/Credits"
 import { HorizontalFlatList } from "@components/HorizontalFlatList"
-import {
-  ProductionTile,
-  ProductionTileHeightPlaceholder,
-} from "@components/ProductionTile"
+import { PosterTile, PosterTileHeightPlaceholder } from "@components/PosterTile"
+import { detailSpacing, sectionImageHeight } from "@components/theme"
 import { WithCommonProductionDetails } from "@components/WithCommonProductionDetails"
 import { CommonStackParams } from "@components/WithCommonStackScreens"
-import { TVDetailExtra, useTVDetailExtra } from "@queries/tv"
-import { NativeStackScreenProps } from "@react-navigation/native-stack"
+import { TVDetailExtra, useProductionDetailExtra } from "@queries/production"
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack"
 import React, { VFC } from "react"
-import { Text, View } from "react-native"
+import { StyleProp, Text, View, ViewStyle } from "react-native"
 import { shortDate } from "src/utils"
 import tailwind from "tailwind-rn"
 
@@ -19,9 +19,10 @@ export const TVDetailScreen: VFC<
   route: {
     params: { id, production },
   },
+  navigation,
 }) => {
-  const { data, isLoading } = useTVDetailExtra(id)
-  const detail: TVDetailExtra & { id: number } = {
+  const { data, isLoading } = useProductionDetailExtra("tv", id)
+  const detail: (TVDetailExtra | undefined) & { id: number } = {
     ...{ id },
     ...production,
     ...{ first_air_date: undefined },
@@ -32,19 +33,29 @@ export const TVDetailScreen: VFC<
       type="tv"
       detail={detail}
       isLoading={isLoading}
-      MiddleSlot={() => <Seasons detail={detail} isLoading={isLoading} />}
+      MiddleSlot={() => (
+        <Seasons
+          detail={detail}
+          isLoading={isLoading}
+          navigation={navigation}
+          style={detailSpacing}
+        />
+      )}
     />
   )
 }
 
-const Seasons: VFC<{ isLoading: boolean; detail: TVDetailExtra }> = ({
-  detail,
-  isLoading,
-}) => {
-  const height = 160
+const Seasons: VFC<{
+  isLoading: boolean
+  detail: TVDetailExtra
+  navigation: NativeStackNavigationProp<CommonStackParams, "TVDetail">
+  style?: StyleProp<ViewStyle>
+}> = ({ detail, isLoading, navigation, style }) => {
+  const tvId = detail.id
+  const height = sectionImageHeight
   return isLoading || detail.seasons?.length ? (
-    <View style={tailwind("flex-row")}>
-      <ProductionTileHeightPlaceholder
+    <View style={[tailwind("flex-row"), style]}>
+      <PosterTileHeightPlaceholder
         height={height}
         renderDescription={() => (
           <Text style={tailwind("font-bold")}>{"\n\n\n"}</Text>
@@ -53,23 +64,38 @@ const Seasons: VFC<{ isLoading: boolean; detail: TVDetailExtra }> = ({
       <HorizontalFlatList
         title="Seasons"
         data={detail.seasons}
-        renderItem={({ item }) => (
-          <ProductionTile
-            production={item}
-            height={height}
-            renderDescription={({ name, episode_count, air_date }) => (
-              <View>
-                <Text numberOfLines={1} style={tailwind("font-bold")}>
-                  {name}
-                </Text>
-                <Text numberOfLines={1}>
-                  {episode_count ? `${episode_count} episodes` : undefined}
-                </Text>
-                <Text numberOfLines={1}>{shortDate(air_date)}</Text>
-              </View>
-            )}
-          />
-        )}
+        renderItem={({ item }) => {
+          const seasonNumber = item.season_number
+          return (
+            <PosterTile
+              uri={item.poster_path}
+              height={height}
+              onPress={
+                tvId && seasonNumber !== undefined
+                  ? () =>
+                      navigation.push("SeasonDetail", {
+                        tvId,
+                        seasonNumber: seasonNumber,
+                        season: item,
+                      })
+                  : undefined
+              }
+              renderDescription={() => (
+                <View>
+                  <Text numberOfLines={1} style={tailwind("font-bold")}>
+                    {item.name}
+                  </Text>
+                  <Text numberOfLines={1}>
+                    {item.episode_count
+                      ? `${item.episode_count} episodes`
+                      : undefined}
+                  </Text>
+                  <Text numberOfLines={1}>{shortDate(item.air_date)}</Text>
+                </View>
+              )}
+            />
+          )
+        }}
         keyExtractor={(item) => `${item.id}`}
       />
     </View>

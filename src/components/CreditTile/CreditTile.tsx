@@ -1,5 +1,6 @@
 import { AppImage } from "@components/AppImage"
-import { CastMember, CrewMember, creditImageUrl } from "@queries/credit"
+import { CastMember, CrewMember, GuestStar } from "@queries/credit"
+import { creditImageUrl } from "@queries/image"
 import React, { VFC } from "react"
 import { Text, View } from "react-native"
 import tailwind from "tailwind-rn"
@@ -8,6 +9,7 @@ export const CreditTile: VFC<
   { height?: number } & (
     | { type: "cast"; credit: CastMember }
     | { type: "crew"; credit: CrewMember }
+    | { type: "guestStar"; credit: GuestStar }
   )
 > = ({ height, ...props }) => (
   <AppImage
@@ -24,7 +26,11 @@ export const CreditTile: VFC<
             }${"\n"}`}</Text>
           )}
           <Text>
-            {props.type === "cast" ? props.credit.character : props.credit.job}
+            {props.type === "cast"
+              ? props.credit.character
+              : props.type === "crew"
+              ? props.credit.job
+              : props.credit.character_name}
           </Text>
         </Text>
       </View>

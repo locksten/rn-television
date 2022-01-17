@@ -1,5 +1,3 @@
-import { tmdbImagePrefixUrl } from "@queries/tmdb"
-
 export type CastMember = Partial<{
   adult: boolean
   gender: number
@@ -29,13 +27,28 @@ export type CrewMember = Partial<{
   job: string
 }>
 
-export type Credit = CastMember | CrewMember
+export type GuestStar = Partial<{
+  character_name: string
+  credit_id: string
+  order: number
+  adult: boolean
+  gender: number
+  id: number
+  known_for_department: string
+  name: string
+  original_name: string
+  popularity: number
+  profile_path: string
+}>
 
-export type CreditType = "cast" | "crew"
+export type Credit = CastMember | CrewMember | GuestStar
+
+export type CreditType = "cast" | "crew" | "guestStar"
 
 export type Credits = Partial<{
   cast: CastMember[]
   crew: CrewMember[]
+  guest_stars: GuestStar[]
   id: number
 }>
 
@@ -53,6 +66,3 @@ export const combineSameCrewMembers = (crew: CrewMember[]) => {
     return acc
   }, [] as CrewMember[])
 }
-
-export const creditImageUrl = (path?: string) =>
-  path && tmdbImagePrefixUrl + "w185" + path
